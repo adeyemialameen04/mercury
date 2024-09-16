@@ -2,6 +2,7 @@ import TelegramBot, { Message } from "node-telegram-bot-api";
 import { handleAddExistingWallet, handleCreateWallet } from "../commands/start";
 import { menuActions } from "../commands/menu";
 import logger from "../../utils/logger";
+import { handleBack } from "./general";
 
 export const handleCallbackQuery = (
   callbackQuery: TelegramBot.CallbackQuery,
@@ -16,7 +17,10 @@ export const handleCallbackQuery = (
     } else {
       logger.error(`No action found for: ${action}`);
     }
+  } else if (command === "back") {
+    handleBack(message as Message, action);
   }
+
   // if (data.command === "create") {
   //   handleCreateWallet(callbackQuery.message as Message);
   // } else if (data.command === "add") {

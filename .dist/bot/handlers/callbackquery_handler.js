@@ -1,5 +1,6 @@
 import { menuActions } from "../commands/menu";
 import logger from "../../utils/logger";
+import { handleBack } from "./general";
 export const handleCallbackQuery = (callbackQuery) => {
     const { message, data } = callbackQuery;
     const { command, action } = JSON.parse(data || "{}");
@@ -11,6 +12,9 @@ export const handleCallbackQuery = (callbackQuery) => {
         else {
             logger.error(`No action found for: ${action}`);
         }
+    }
+    else if (command === "back") {
+        handleBack(message, action);
     }
     // if (data.command === "create") {
     //   handleCreateWallet(callbackQuery.message as Message);
