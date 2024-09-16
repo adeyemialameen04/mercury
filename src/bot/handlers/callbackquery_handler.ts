@@ -1,5 +1,5 @@
 import TelegramBot, { Message } from "node-telegram-bot-api";
-import { handleAddExistingWallet, handleCreateWallet } from "../commands/start";
+// import { handleAddExistingWallet, handleCreateWallet } from "../commands/start";
 import { menuActions } from "../commands/menu";
 import logger from "../../utils/logger";
 import { handleBack } from "./general";

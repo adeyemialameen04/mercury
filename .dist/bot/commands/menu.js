@@ -216,6 +216,31 @@ ${referral_link}
         },
     });
 };
+const backOnly = (msg, action) => {
+    return bot.editMessageText(`You have no active ${action}. Create a ${action} from the Buy/Sell menu.`, {
+        chat_id: msg?.chat.id,
+        message_id: msg?.message_id,
+        reply_markup: {
+            inline_keyboard: [
+                [
+                    {
+                        text: " 🔙 Back",
+                        callback_data: JSON.stringify({
+                            command: "back",
+                            action: "menu",
+                        }),
+                    },
+                ],
+            ],
+        },
+    });
+};
+const limit_orders = (msg) => {
+    return backOnly(msg, "limit order");
+};
+const dca_orders = (msg) => {
+    return backOnly(msg, "DCA order");
+};
 export const menuActions = [
     {
         action: "buy",
@@ -232,6 +257,14 @@ export const menuActions = [
     {
         action: "referrals",
         func: referrals,
+    },
+    {
+        action: "limit_orders",
+        func: limit_orders,
+    },
+    {
+        action: "dca_orders",
+        func: dca_orders,
     },
     //     {
     //   action: "",
