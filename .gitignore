@@ -171,6 +171,7 @@ dist
 # IntelliJ based IDEs
 .idea
 .env
+*.log
 
 # Finder (MacOS) folder config
 .DS_Store
