@@ -1,4 +1,5 @@
 import {
+  BASE_URL,
   BOT_TOKEN,
   BOT_USERNAME,
   DESCRIPTION,
@@ -12,4 +13,5 @@ export const settings = {
   version: VERSION,
   description: DESCRIPTION,
   name: PROJECT_NAME,
+  base_url: BASE_URL,
 };

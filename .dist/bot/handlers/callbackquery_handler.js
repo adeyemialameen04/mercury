@@ -21,5 +21,5 @@ export const handleCallbackQuery = (callbackQuery) => {
     // } else if (data.command === "add") {
     //   handleAddExistingWallet(callbackQuery.message as Message);
     // }
-    console.log(data);
+    logger.info(`callbackQuery ${data}`);
 };
