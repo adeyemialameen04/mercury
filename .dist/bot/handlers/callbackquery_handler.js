@@ -1,6 +1,7 @@
 import { menuActions } from "../commands/menu";
 import logger from "../../utils/logger";
 import { handleBack } from "./general";
+import { bot } from "../bot";
 export const handleCallbackQuery = (callbackQuery) => {
     const { message, data } = callbackQuery;
     const { command, action } = JSON.parse(data || "{}");
@@ -15,6 +16,12 @@ export const handleCallbackQuery = (callbackQuery) => {
     }
     else if (command === "back") {
         handleBack(message, action);
+    }
+    if (!command) {
+        logger.info("No command");
+        if (action === "close") {
+            bot.deleteMessage(message?.chat.id, message?.message_id);
+        }
     }
     // if (data.command === "create") {
     //   handleCreateWallet(callbackQuery.message as Message);

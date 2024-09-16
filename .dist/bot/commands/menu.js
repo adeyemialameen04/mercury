@@ -186,6 +186,34 @@ Stay tuned for more details on how we'll reward active users and happy trading!
 ${referral_link}
 `,
         parse_mode: "HTML",
+        reply_markup: {
+            inline_keyboard: [
+                [
+                    {
+                        text: "Close",
+                        callback_data: JSON.stringify({
+                            action: "close",
+                        }),
+                    },
+                ],
+                [
+                    {
+                        text: "Rewards Wallet: BXDP..velZ",
+                        callback_data: JSON.stringify({
+                            action: "change_referral_addr",
+                        }),
+                    },
+                ],
+                [
+                    {
+                        text: "Udate Your referral Link",
+                        callback_data: JSON.stringify({
+                            action: "close",
+                        }),
+                    },
+                ],
+            ],
+        },
     });
 };
 export const menuActions = [
