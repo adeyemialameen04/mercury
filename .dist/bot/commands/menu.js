@@ -2,9 +2,7 @@ import { bot } from "../bot";
 import { formatText } from "../../utils/format_text";
 export const handleMenu = (msg) => {
     const chatId = msg.chat.id;
-    return bot.sendMessage(chatId, 
-    // "myMessage                           (lots of spaces)                       &#x200D;",
-    formatText("Hey there"), {
+    return bot.sendMessage(chatId, formatText("Hey there"), {
         parse_mode: "HTML",
         reply_markup: {
             inline_keyboard: [
@@ -122,3 +120,36 @@ export const handleMenu = (msg) => {
         },
     });
 };
+const buy = (msg) => {
+    const chatId = msg.chat.id;
+    return bot.sendMessage(chatId, "Enter how many stx you want to buy");
+};
+const sell = (msg) => {
+    const chatId = msg.chat.id;
+    return bot.sendMessage(chatId, "Enter how many stx you want to send");
+};
+const positions = (msg) => {
+    const chatId = msg.chat.id;
+    return bot.editMessageText("You do not have any tokens yet! Start trading in the Buy menu.", {
+        chat_id: chatId,
+        message_id: msg.message_id,
+    });
+};
+export const menuActions = [
+    {
+        action: "buy",
+        func: buy,
+    },
+    {
+        action: "sell",
+        func: sell,
+    },
+    {
+        action: "positions",
+        func: positions,
+    },
+    //   {
+    //   action: "",
+    //   func: "",
+    // },
+];
