@@ -3,6 +3,7 @@ import { bot } from "../bot";
 import { formatText } from "../../utils/format_text";
 import { settings } from "../../config/constants";
 import { generateReferralString } from "../../utils/referrals";
+import { BoldUnderline } from "../../utils/tags";
 export const menuInlineKeyboard = [
     [
         {
@@ -166,7 +167,7 @@ const referrals = (msg) => {
     const chatId = msg.chat.id;
     const imagePath = path.resolve(__dirname, "../../public/s4vitar.png");
     const referral_link = `${settings.base_url}/${generateReferralString()}`;
-    return bot.sendPhoto(chatId, "https://images.dog.ceo/breeds/mexicanhairless/n02113978_2261.jpg", {
+    return bot.sendPhoto(chatId, "https://i.ibb.co/Q80rr1M/s4vitar.png", {
         caption: ` 💰 <b>Invite your friends to save 10% on fees. If you've traded more than $10k volume in a week you'll receive a 35% share of the fees paid by your referrees! Otherwise, you'll receive a 25% share.
 </b>
 
@@ -241,6 +242,44 @@ const limit_orders = (msg) => {
 const dca_orders = (msg) => {
     return backOnly(msg, "DCA order");
 };
+const help = (msg) => {
+    return bot.sendMessage(msg.chat.id, `<u><b>How do i use Mercury?</b></u>
+Check out our <i><a href="https://youtube.com/mercury">Youtube Playlist</a></i>
+
+${BoldUnderline("Which tokens can i trade?")}
+Any STX token that is tradeable via stacks.js, including STX
+
+${BoldUnderline("Where can i find my referral code?")}
+Open the /start menu and click 💰 Referrals.
+
+${BoldUnderline("My transaction timed out. What happened?")}
+transaction timeouts can occur when there is heavy network load or instability. THis is simple the nature of the current Stacks network.
+
+${BoldUnderline("What are the fees for using mercury?")}
+Transactions through mercury incur a fee of 1%, or 0.9% if you were referred by another user. We don't charge a subscription fee or pay-wall any features.
+
+${BoldUnderline("My net profit seems wrong, why is that?")}
+The net profit of a trade takes into consideration the trade's transaction fees. Confirm the details of your trade on Stacks.io to verify the net profit.
+
+${BoldUnderline("Additional questions or need support?")}
+Join our Telegram group @mercury_on_stx_bot and one of our admins can assist you.
+    `, {
+        parse_mode: "HTML",
+        reply_markup: {
+            inline_keyboard: [
+                [
+                    {
+                        text: " 🔙 Back",
+                        callback_data: JSON.stringify({
+                            command: "back",
+                            action: "menu",
+                        }),
+                    },
+                ],
+            ],
+        },
+    });
+};
 export const menuActions = [
     {
         action: "buy",
@@ -265,6 +304,10 @@ export const menuActions = [
     {
         action: "dca_orders",
         func: dca_orders,
+    },
+    {
+        action: "help",
+        func: help,
     },
     //     {
     //   action: "",
