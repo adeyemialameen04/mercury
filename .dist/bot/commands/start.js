@@ -1,5 +1,5 @@
 import { bot } from "../bot";
-import { generateSecretKey, generateWallet } from "@stacks/wallet-sdk";
+import { generateSecretKey, generateWallet, } from "@stacks/wallet-sdk";
 export const startCommand = (msg) => {
     const chatId = msg.chat.id;
     return bot.sendMessage(chatId, "Welcome to Mecury ", {
@@ -29,7 +29,7 @@ export const startCommand = (msg) => {
 //    "Okay we are setting up a new wallet for you.."
 //  );
 //};
-export const handleCreateWallet = (msg) => {
+export const handleCreateWallet = async (msg) => {
     const chatId = msg.chat.id;
     /**
      * to generate a wallet for the user we need to ask them for a pass to be
@@ -42,8 +42,15 @@ export const handleCreateWallet = (msg) => {
     12-word secret key
     */
     const secretKey = generateSecretKey(128);
-    const wallet = generateWallet({ secretKey, password });
+    // create a wallet object
+    const wallet = await generateWallet({ secretKey, password });
+    console.log(wallet);
     return bot.sendMessage(chatId, "Okay we are setting up a new wallet for you..");
+};
+export const handleAddAccount = async (msg) => {
+    // in stacks, after the first wallet have been created users can choose to add accounts this is done to diversify the assets.
+    // we should find a way to get the user wallet object here, or merge this function with `handleCreateWallet`
+    //wallet = await generateNewAccount(wallet); // adds a new account to an existing wallet object, immutable, NOT in-place
 };
 export const handleAddExistingWallet = (msg) => {
     const chatId = msg.chat.id;
