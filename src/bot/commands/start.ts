@@ -4,7 +4,9 @@ import {
   generateSecretKey,
   generateWallet,
   generateNewAccount,
+  restoreWalletAccounts,
 } from "@stacks/wallet-sdk";
+import { StacksMainnet } from "@stacks/network";
 
 interface Wallet {
   /** Used when generating app private keys, which encrypt app-specific data */
@@ -103,8 +105,17 @@ export const handleAddAccount = async (msg: Message) => {
   //wallet = await generateNewAccount(wallet); // adds a new account to an existing wallet object, immutable, NOT in-place
 };
 
-export const handleAddExistingWallet = (msg: Message) => {
+export const handleAddExistingWallet = async (msg: Message) => {
   const chatId = msg.chat.id;
+
+  const restoreWallet = await restoreWalletAccounts({
+    // `baseWallet` is returned from `generateWallet`
+    // Users can host their own Gaia hub, and this library's API can use that Gaia hub, if provided.
+    // i dont understand what they mean by the above 🥺
+    wallet: baseWallet,
+    gaiaHubUrl: "https://hub.blockstack.org",
+    network: new StacksMainnet(),
+  });
 
   return bot.sendMessage(
     chatId,

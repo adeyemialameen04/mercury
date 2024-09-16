@@ -1,5 +1,6 @@
 import { bot } from "../bot";
-import { generateSecretKey, generateWallet, } from "@stacks/wallet-sdk";
+import { generateSecretKey, generateWallet, restoreWalletAccounts, } from "@stacks/wallet-sdk";
+import { StacksMainnet } from "@stacks/network";
 export const startCommand = (msg) => {
     const chatId = msg.chat.id;
     return bot.sendMessage(chatId, "Welcome to Mecury ", {
@@ -52,7 +53,15 @@ export const handleAddAccount = async (msg) => {
     // we should find a way to get the user wallet object here, or merge this function with `handleCreateWallet`
     //wallet = await generateNewAccount(wallet); // adds a new account to an existing wallet object, immutable, NOT in-place
 };
-export const handleAddExistingWallet = (msg) => {
+export const handleAddExistingWallet = async (msg) => {
     const chatId = msg.chat.id;
+    const restoreWallet = await restoreWalletAccounts({
+        // `baseWallet` is returned from `generateWallet`
+        // Users can host their own Gaia hub, and this library's API can use that Gaia hub, if provided.
+        // i dont understand what they mean by the above 🥺
+        wallet: baseWallet,
+        gaiaHubUrl: "https://hub.blockstack.org",
+        network: new StacksMainnet(),
+    });
     return bot.sendMessage(chatId, "Okay we are adding a new wallet for you now. ");
 };
