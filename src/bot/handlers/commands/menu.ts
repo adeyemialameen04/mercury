@@ -1,142 +1,13 @@
 import path from "path";
 import { Message } from "node-telegram-bot-api";
-import { bot } from "../bot";
-import { formatText } from "../../utils/format_text";
-import { settings } from "../../config/constants";
-import { generateReferralString } from "../../utils/referrals";
-import { BoldUnderline } from "../../utils/tags";
+import { bot } from "@/bot/bot";
+import { settings } from "@/config/constants";
+import { formatText } from "@/utils/format_text";
+import { generateReferralString } from "@/utils/referrals";
+import { menuInlineKeyboard, refreshAndBackBtns } from "@/bot/ui/menu";
+import { referral } from "@/bot/html/referral";
 
-export const menuInlineKeyboard = [
-  [
-    {
-      text: "Buy",
-      callback_data: JSON.stringify({
-        command: "menu",
-        action: "buy",
-      }),
-    },
-    {
-      text: "Sell",
-      callback_data: JSON.stringify({
-        command: "menu",
-        action: "sell",
-      }),
-    },
-  ],
-  [
-    {
-      text: "Positions",
-      callback_data: JSON.stringify({
-        command: "menu",
-        action: "positions",
-      }),
-    },
-    {
-      text: "Limit Orders",
-      callback_data: JSON.stringify({
-        command: "menu",
-        action: "limit_orders",
-      }),
-    },
-    {
-      text: "DCA Orders",
-      callback_data: JSON.stringify({
-        command: "menu",
-        action: "dca_orders",
-      }),
-    },
-  ],
-  [
-    {
-      text: "Copy Trade",
-      callback_data: JSON.stringify({
-        command: "menu",
-        action: "copy_trade",
-      }),
-    },
-    {
-      text: "LP Sniper 🔜",
-      callback_data: JSON.stringify({
-        command: "menu",
-        action: "lp_sniper",
-      }),
-    },
-  ],
-  [
-    {
-      text: "New Pairs",
-      callback_data: JSON.stringify({
-        command: "menu",
-        action: "new_pairs",
-      }),
-    },
-    {
-      text: " 💰 Referrals",
-      callback_data: JSON.stringify({
-        command: "menu",
-        action: "referrals",
-      }),
-    },
-    {
-      text: "Settings",
-      callback_data: JSON.stringify({
-        command: "menu",
-        action: "settings",
-      }),
-    },
-  ],
-  [
-    {
-      text: "Bridge",
-      callback_data: JSON.stringify({
-        command: "menu",
-        action: "bridge",
-      }),
-    },
-    {
-      text: "Withdraw",
-      callback_data: JSON.stringify({
-        command: "menu",
-        action: "withdraw",
-      }),
-    },
-  ],
-  [
-    {
-      text: "Help",
-      callback_data: JSON.stringify({
-        command: "menu",
-        action: "help",
-      }),
-    },
-    {
-      text: "Refresh",
-      callback_data: JSON.stringify({
-        command: "menu",
-        action: "refresh",
-      }),
-    },
-  ],
-];
 
-const refreshAndBackBtns = [
-  [
-    {
-      text: " 🔙 Back",
-      callback_data: JSON.stringify({
-        command: "back",
-        action: "menu",
-      }),
-    },
-    {
-      text: "Refresh",
-      callback_data: JSON.stringify({
-        command: "refresh",
-        action: "menu",
-      }),
-    },
-  ],
-];
 
 export const handleMenu = (msg: Message) => {
   const chatId = msg.chat.id;
@@ -269,27 +140,7 @@ const dca_orders = (msg: Message) => {
 const help = (msg: Message) => {
   return bot.sendMessage(
     msg.chat.id,
-    `<u><b>How do i use Mercury?</b></u>
-Check out our <i><a href="https://youtube.com/mercury">Youtube Playlist</a></i>
-
-${BoldUnderline("Which tokens can i trade?")}
-Any STX token that is tradeable via stacks.js, including STX
-
-${BoldUnderline("Where can i find my referral code?")}
-Open the /start menu and click 💰 Referrals.
-
-${BoldUnderline("My transaction timed out. What happened?")}
-transaction timeouts can occur when there is heavy network load or instability. THis is simple the nature of the current Stacks network.
-
-${BoldUnderline("What are the fees for using mercury?")}
-Transactions through mercury incur a fee of 1%, or 0.9% if you were referred by another user. We don't charge a subscription fee or pay-wall any features.
-
-${BoldUnderline("My net profit seems wrong, why is that?")}
-The net profit of a trade takes into consideration the trade's transaction fees. Confirm the details of your trade on Stacks.io to verify the net profit.
-
-${BoldUnderline("Additional questions or need support?")}
-Join our Telegram group @mercury_on_stx_bot and one of our admins can assist you.
-    `,
+    referral,
     {
       parse_mode: "HTML",
       reply_markup: {
