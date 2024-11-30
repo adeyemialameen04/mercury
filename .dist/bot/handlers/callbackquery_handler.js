@@ -1,9 +1,8 @@
-import { generateNewWallet } from "@/services/wallet-generation";
 import logger from "@/utils/logger";
 import { bot } from "../bot";
 import { menuActions } from "./commands/menu";
 import { handleBack } from "./general";
-// import { handleAddExistingWallet, handleCreateWallet } from "../commands/start";
+import { handleCreateNewWallet } from "./commands/start/create";
 export const handleCallbackQuery = async (callbackQuery) => {
     const { message, data } = callbackQuery;
     const { command, action } = JSON.parse(data || "{}");
@@ -25,13 +24,13 @@ export const handleCallbackQuery = async (callbackQuery) => {
             bot.deleteMessage(message?.chat.id, message?.message_id);
         }
     }
-    if (command === "create") {
-        const walletInfo = await generateNewWallet("HelloPassword123");
-        console.log(JSON.stringify(walletInfo, null, 2));
-        // handleCreateWallet(callbackQuery.message as Message);
-    }
-    else if (command === "add") {
-        // handleAddExistingWallet(callbackQuery.message as Message);
+    if (command === "start") {
+        if (action === "create") {
+            await handleCreateNewWallet(message);
+        }
+        else if (action === "add") {
+            // handleAddExistingWallet(callbackQuery.message as Message);
+        }
     }
     logger.info(`callbackQuery ${data}`);
 };

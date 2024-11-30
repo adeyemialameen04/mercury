@@ -5,3 +5,6 @@ export const Link = (text: string, href: string) => {
 export const BoldUnderline = (text: string) => {
   return `<b><u>${text}</u></b>`;
 };
+export const Code = (text: string) => {
+  return `<code>${text}</code>`
+}

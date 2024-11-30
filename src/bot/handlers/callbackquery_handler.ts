@@ -4,13 +4,14 @@ import TelegramBot, { Message } from "node-telegram-bot-api";
 import { bot } from "../bot";
 import { menuActions } from "./commands/menu";
 import { handleBack } from "./general";
-// import { handleAddExistingWallet, handleCreateWallet } from "../commands/start";
+import { handleCreateNewWallet } from "./commands/start/create";
 
 export const handleCallbackQuery = async (
   callbackQuery: TelegramBot.CallbackQuery,
 ) => {
   const { message, data } = callbackQuery;
   const { command, action } = JSON.parse(data || "{}");
+
 
   if (command === "menu") {
     const menuAction = menuActions.find((item) => item.action === action);
@@ -33,12 +34,12 @@ export const handleCallbackQuery = async (
     }
   }
 
-  if (command === "create") {
-    const walletInfo = await generateNewWallet("HelloPassword123")
-    console.log(JSON.stringify(walletInfo, null, 2));
-    // handleCreateWallet(callbackQuery.message as Message);
-  } else if (command === "add") {
-    // handleAddExistingWallet(callbackQuery.message as Message);
+  if (command === "start") {
+    if (action === "create") {
+      await handleCreateNewWallet(message as Message)
+    } else if (action === "add") {
+      // handleAddExistingWallet(callbackQuery.message as Message);
+    }
   }
   logger.info(`callbackQuery ${data}`);
 };
