@@ -136,7 +136,7 @@ const refreshAndBackBtns = [
 ];
 export const handleMenu = (msg) => {
     const chatId = msg.chat.id;
-    return bot.sendMessage(chatId, formatText("Hey there"), {
+    return bot.sendMessage(chatId, formatText("Hey there welcome to mercurey_on_stx, you asked for the menu so here it is!\nFeel free to look around i would wait."), {
         parse_mode: "HTML",
         reply_markup: {
             inline_keyboard: menuInlineKeyboard,

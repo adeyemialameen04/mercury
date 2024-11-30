@@ -1,17 +1,11 @@
 import { Message } from "node-telegram-bot-api";
 import { bot } from "../bot";
-import {
-  generateSecretKey,
-  generateWallet,
-  generateNewAccount,
-  restoreWalletAccounts,
-} from "@stacks/wallet-sdk";
-import { StacksMainnet } from "@stacks/network";
+import { formatText } from "../../utils/format_text";
 
 export const startCommand = (msg: Message) => {
   const chatId = msg.chat.id;
 
-  return bot.sendMessage(chatId, "Welcome to Mecury ", {
+  return bot.sendMessage(chatId, formatText("Welcome to Mecury"), {
     reply_markup: {
       inline_keyboard: [
         [
