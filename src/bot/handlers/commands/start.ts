@@ -1,8 +1,8 @@
+import { bot } from "@/bot/bot";
+import { formatText } from "@/utils/format_text";
 import { Message } from "node-telegram-bot-api";
-import { bot } from "../bot";
-import { formatText } from "../../utils/format_text";
 
-export const startCommand = (msg: Message) => {
+export const startHandler = (msg: Message) => {
   const chatId = msg.chat.id;
 
   return bot.sendMessage(chatId, formatText("Welcome to Mecury"), {

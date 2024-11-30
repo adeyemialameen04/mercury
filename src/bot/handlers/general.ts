@@ -1,7 +1,7 @@
+import { formatText } from "@/utils/format_text";
 import { Message } from "node-telegram-bot-api";
 import { bot } from "../bot";
-import { formatText } from "../../utils/format_text";
-import { menuInlineKeyboard } from "../commands/menu";
+import { menuInlineKeyboard } from "../ui/menu";
 
 export const handleBack = (msg: Message, to: string) => {
   const chatId = msg.chat.id;

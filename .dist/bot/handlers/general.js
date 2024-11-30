@@ -1,6 +1,6 @@
+import { formatText } from "@/utils/format_text";
 import { bot } from "../bot";
-import { formatText } from "../../utils/format_text";
-import { menuInlineKeyboard } from "../commands/menu";
+import { menuInlineKeyboard } from "../ui/menu";
 export const handleBack = (msg, to) => {
     const chatId = msg.chat.id;
     if (to === "menu") {

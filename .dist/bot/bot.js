@@ -1,13 +1,13 @@
 import TelegramBot from "node-telegram-bot-api";
 import { settings } from "../config/constants";
-import { startCommand } from "./commands/start";
 import { handleMessage } from "./handlers/message_handler";
 import { handleCallbackQuery } from "./handlers/callbackquery_handler";
 import logger from "../utils/logger";
+import { startHandler } from "./handlers/commands/start";
 console.log(settings);
 export const bot = new TelegramBot(settings.token, { polling: true });
 logger.info("Bot started");
-bot.onText(/\/start/, startCommand);
+bot.onText(/\/start/, startHandler);
 bot.on("message", handleMessage);
 bot.on("callback_query", handleCallbackQuery);
 // bot.on("message", (msg: Message) => {

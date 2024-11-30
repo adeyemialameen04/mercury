@@ -1,7 +1,7 @@
 import { Message } from "node-telegram-bot-api";
-import { helpCommand } from "../commands/help";
 import { bot } from "../bot";
-import { handleMenu } from "../commands/menu";
+import { helpCommand } from "./commands/help";
+import { handleMenu } from "./commands/menu";
 
 export const handleMessage = (msg: Message) => {
   const chatId = msg.chat.id;

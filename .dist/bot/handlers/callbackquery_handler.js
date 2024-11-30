@@ -1,9 +1,9 @@
-// import { handleAddExistingWallet, handleCreateWallet } from "../commands/start";
-import { menuActions } from "../commands/menu";
-import logger from "../../utils/logger";
-import { handleBack } from "./general";
+import { generateNewWallet } from "@/services/wallet-generation";
+import logger from "@/utils/logger";
 import { bot } from "../bot";
-import { generateNewWallet } from "../../services/wallet-generation";
+import { menuActions } from "./commands/menu";
+import { handleBack } from "./general";
+// import { handleAddExistingWallet, handleCreateWallet } from "../commands/start";
 export const handleCallbackQuery = async (callbackQuery) => {
     const { message, data } = callbackQuery;
     const { command, action } = JSON.parse(data || "{}");
