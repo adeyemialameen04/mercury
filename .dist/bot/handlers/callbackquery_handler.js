@@ -3,7 +3,8 @@ import { menuActions } from "../commands/menu";
 import logger from "../../utils/logger";
 import { handleBack } from "./general";
 import { bot } from "../bot";
-export const handleCallbackQuery = (callbackQuery) => {
+import { generateNewWallet } from "../../services/wallet-generation";
+export const handleCallbackQuery = async (callbackQuery) => {
     const { message, data } = callbackQuery;
     const { command, action } = JSON.parse(data || "{}");
     if (command === "menu") {
@@ -24,10 +25,13 @@ export const handleCallbackQuery = (callbackQuery) => {
             bot.deleteMessage(message?.chat.id, message?.message_id);
         }
     }
-    // if (data.command === "create") {
-    //   handleCreateWallet(callbackQuery.message as Message);
-    // } else if (data.command === "add") {
-    //   handleAddExistingWallet(callbackQuery.message as Message);
-    // }
+    if (command === "create") {
+        const walletInfo = await generateNewWallet("HelloPassword123");
+        console.log(JSON.stringify(walletInfo, null, 2));
+        // handleCreateWallet(callbackQuery.message as Message);
+    }
+    else if (command === "add") {
+        // handleAddExistingWallet(callbackQuery.message as Message);
+    }
     logger.info(`callbackQuery ${data}`);
 };
