@@ -13,8 +13,7 @@
     "typescript": "^5.6.2"
   },
   "dependencies": {
-    "@stacks/network": "^6.17.0",
-    "@stacks/transactions": "7.0.0",
+    "@stacks/transactions": "6.16.1",
     "@stacks/wallet-sdk": "7.0.0",
     "@types/dotenv": "^8.2.3",
     "@types/node-telegram-bot-api": "^0.64.7",
