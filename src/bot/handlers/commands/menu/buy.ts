@@ -1,62 +1,56 @@
 import {
   makeContractCall,
+  broadcastTransaction,
   FungibleConditionCode,
-  makeContractSTXPostCondition,
-  Pc,
+  makeStandardSTXPostCondition,
+  bufferCVFromString,
+  principalCV,
   AnchorMode,
-  PostConditionMode,
   contractPrincipalCV,
   uintCV,
 } from "@stacks/transactions";
-import { StacksMainnet } from "@stacks/network";
-import { broadcastTransaction } from "@stacks/transactions";
+import { StacksTestnet, StacksMainnet } from "@stacks/network";
 
 const contractAddress = "SP3YY9K5QF54W0KTHKNA3SEPMR1B3GTB75BBPJWH0";
 const contractName = "rocket-van-stxcity-dex";
 const tokenContract = "rocket-van-stxcity";
+const tokenTrait =
+  "SP3YY9K5QF54W0KTHKNA3SEPMR1B3GTB75BBPJWH0-rocket-van-stxcity";
 
-export async function buy(
-  senderAddress: string,
-  stxAmount: number
-): Promise<any> {
-  // Create post condition for STX transfer with 50% slippage protection
+export async function stxCitybuy(
+  senderKey: string,
+  stxAmount: number,
+  network: StacksMainnet = new StacksMainnet()
+) {
+  // Add an optional post condition
+  // See below for details on constructing post conditions
+  const postConditionAddress = contractAddress;
   const postConditionCode = FungibleConditionCode.GreaterEqual;
-  const postConditionAmount = stxAmount / 2; // 50% slippage tolerance
-  const postCondition = makeContractSTXPostCondition(
-    contractAddress,
-    contractName,
-    postConditionCode,
-    postConditionAmount
-  );
+  const postConditionAmount = stxAmount / 2; // fix slippage later
+  const postConditions = [
+    makeStandardSTXPostCondition(
+      postConditionAddress,
+      postConditionCode,
+      postConditionAmount
+    ),
+  ];
 
-  const transaction = await makeContractCall({
+  const txOptions = {
     contractAddress,
     contractName,
     functionName: "buy",
     functionArgs: [
-      // Token trait reference
       contractPrincipalCV(contractAddress, tokenContract),
       uintCV(stxAmount),
     ],
-    senderKey: privateKey,
-    network: new StacksMainnet(),
-    postConditions: [postCondition],
-    postConditionMode: PostConditionMode.Deny,
-  });
-
-  return transaction;
+    senderKey:
+      "b244296d5907de9864c0b0d51f98a13c52890be0404e83f273144cd5b9960eed01",
+    validateWithAbi: true,
+    network,
+    postConditions,
+    anchorMode: AnchorMode.Any,
+  };
+  const transaction = await makeContractCall(txOptions);
+  const broadcastResponse = await broadcastTransaction(transaction, network);
+  return broadcastResponse.txid;
 }
-
-export async function broadcastBuyTransaction(transaction: any) {
-  try {
-    const broadcastResponse = await broadcastTransaction(transaction);
-    console.log("Transaction broadcast response:", broadcastResponse);
-    return broadcastResponse;
-  } catch (error) {
-    console.error("Error broadcasting transaction:", error);
-    throw error;
-  }
-}
-
-const tx = await buy(mainnet, senderAddress, stxAmount);
-const txId = await broadcastBuyTransaction(tx);

@@ -6,24 +6,29 @@ import { formatText } from "@/utils/format_text";
 import { generateReferralString } from "@/utils/referrals";
 import { menuInlineKeyboard, refreshAndBackBtns } from "@/bot/ui/menu";
 import { referral } from "@/bot/html/referral";
-
-
+import { stxCitybuy } from "./buy";
 
 export const handleMenu = (msg: Message) => {
   const chatId = msg.chat.id;
 
-  return bot.sendMessage(chatId, formatText("Hey there welcome to mercurey_on_stx, you asked for the menu so here it is!\nFeel free to look around i would wait."), {
-    parse_mode: "HTML",
-    reply_markup: {
-      inline_keyboard: menuInlineKeyboard,
-    },
-  });
+  return bot.sendMessage(
+    chatId,
+    formatText(
+      "Hey there welcome to mercurey_on_stx, you asked for the menu so here it is!\nFeel free to look around i would wait."
+    ),
+    {
+      parse_mode: "HTML",
+      reply_markup: {
+        inline_keyboard: menuInlineKeyboard,
+      },
+    }
+  );
 };
 
 const noTokens = (msg: Message) => {
   return bot.editMessageText(
     formatText(
-      "You do not have any tokens yet! Start trading in the Buy menu.",
+      "You do not have any tokens yet! Start trading in the Buy menu."
     ),
     {
       chat_id: msg?.chat?.id,
@@ -32,14 +37,18 @@ const noTokens = (msg: Message) => {
       reply_markup: {
         inline_keyboard: refreshAndBackBtns,
       },
-    },
+    }
   );
 };
 
-const buy = (msg: Message) => {
+const buy = async (msg: Message) => {
   const chatId = msg.chat.id;
+  const senderKey = "";
+  const stxAmount = 100000;
 
-  return bot.sendMessage(chatId, "Enter how many stx you want to buy");
+  const txId = await stxCitybuy(senderKey, stxAmount);
+
+  bot.sendMessage(chatId, "Pending transaction: " + txId);
 };
 
 const sell = (msg: Message) => {
@@ -65,7 +74,7 @@ Your Referrals (updated every 15 min)
 • Total paid: 0 STX ($0.00)
 • Total unpaid: 0 STX ($0.00)
 
-Rewards are paid daily and airdropped directly to your chosen Rewards Wallet. <b><u>You must have accrued at least 0.00STX in unpaid fees to be eligible for a payout</u></b> 
+Rewards are paid daily and airdropped directly to your chosen Rewards Wallet. <b><u>You must have accrued at least 0.00STX in unpaid fees to be eligible for a payout</u></b>
 
 We've established a tiered referral system, ensuring that as more individuals come onboard, rewards extend through five different layers of users. This structure not only benefits community growth but also significantly increases the percentage share of fees for everyone.
 
@@ -125,7 +134,7 @@ const backOnly = (msg: Message, action: string) => {
           ],
         ],
       },
-    },
+    }
   );
 };
 
@@ -138,26 +147,22 @@ const dca_orders = (msg: Message) => {
 };
 
 const help = (msg: Message) => {
-  return bot.sendMessage(
-    msg.chat.id,
-    referral,
-    {
-      parse_mode: "HTML",
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: " 🔙 Back",
-              callback_data: JSON.stringify({
-                command: "back",
-                action: "menu",
-              }),
-            },
-          ],
+  return bot.sendMessage(msg.chat.id, referral, {
+    parse_mode: "HTML",
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: " 🔙 Back",
+            callback_data: JSON.stringify({
+              command: "back",
+              action: "menu",
+            }),
+          },
         ],
-      },
+      ],
     },
-  );
+  });
 };
 
 export const menuActions = [

@@ -5,6 +5,7 @@ import { formatText } from "@/utils/format_text";
 import { generateReferralString } from "@/utils/referrals";
 import { menuInlineKeyboard, refreshAndBackBtns } from "@/bot/ui/menu";
 import { referral } from "@/bot/html/referral";
+import { stxCitybuy } from "./buy";
 export const handleMenu = (msg) => {
     const chatId = msg.chat.id;
     return bot.sendMessage(chatId, formatText("Hey there welcome to mercurey_on_stx, you asked for the menu so here it is!\nFeel free to look around i would wait."), {
@@ -24,9 +25,12 @@ const noTokens = (msg) => {
         },
     });
 };
-const buy = (msg) => {
+const buy = async (msg) => {
     const chatId = msg.chat.id;
-    return bot.sendMessage(chatId, "Enter how many stx you want to buy");
+    const senderKey = "";
+    const stxAmount = 100000;
+    const txId = await stxCitybuy(senderKey, stxAmount);
+    bot.sendMessage(chatId, "Pending transaction: " + txId);
 };
 const sell = (msg) => {
     return noTokens(msg);
@@ -48,7 +52,7 @@ Your Referrals (updated every 15 min)
 • Total paid: 0 STX ($0.00)
 • Total unpaid: 0 STX ($0.00)
 
-Rewards are paid daily and airdropped directly to your chosen Rewards Wallet. <b><u>You must have accrued at least 0.00STX in unpaid fees to be eligible for a payout</u></b> 
+Rewards are paid daily and airdropped directly to your chosen Rewards Wallet. <b><u>You must have accrued at least 0.00STX in unpaid fees to be eligible for a payout</u></b>
 
 We've established a tiered referral system, ensuring that as more individuals come onboard, rewards extend through five different layers of users. This structure not only benefits community growth but also significantly increases the percentage share of fees for everyone.
 

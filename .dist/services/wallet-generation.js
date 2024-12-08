@@ -1,16 +1,12 @@
-import {
-  generateSecretKey,
-  generateWallet,
-  randomSeedPhrase,
-} from "@stacks/wallet-sdk";
+import { generateSecretKey, generateWallet } from "@stacks/wallet-sdk";
 import { getAddressFromPrivateKey } from "@stacks/transactions";
-import { bot } from "../bot/bot";
 export const generateNewWallet = async (password) => {
-  const mnemonic = randomSeedPhrase();
+  const mnemonic = generateSecretKey();
   const wallet = await generateWallet({
     secretKey: mnemonic,
-    password: "",
+    password: password,
   });
+  console.log(wallet);
   const walletInfo = {
     mnemonic,
     keyInfo: {
@@ -22,16 +18,4 @@ export const generateNewWallet = async (password) => {
     },
   };
   return walletInfo;
-};
-export const handleCreateWallet = async (msg) => {
-  const chatId = msg.chat.id;
-  const password = "password"; // this should be the password the user provides
-  const secretKey = generateSecretKey(128);
-  // create a wallet object
-  const wallet = await generateWallet({ secretKey, password });
-  console.log(wallet);
-  return bot.sendMessage(
-    chatId,
-    "Okay we are setting up a new wallet for you.."
-  );
 };
