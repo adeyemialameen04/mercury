@@ -3,10 +3,7 @@ import {
   generateWallet,
   randomSeedPhrase,
 } from "@stacks/wallet-sdk";
-import {
-  getAddressFromPrivateKey,
-  privateKeyToPublic,
-} from "@stacks/transactions";
+import { getAddressFromPrivateKey } from "@stacks/transactions";
 import { bot } from "../bot/bot";
 export const generateNewWallet = async (password) => {
   const mnemonic = randomSeedPhrase();
@@ -18,7 +15,6 @@ export const generateNewWallet = async (password) => {
     mnemonic,
     keyInfo: {
       privateKey: wallet.accounts[0].stxPrivateKey,
-      publicKey: privateKeyToPublic(wallet.accounts[0].stxPrivateKey),
       address: getAddressFromPrivateKey(
         wallet.accounts[0].stxPrivateKey,
         "testnet"
