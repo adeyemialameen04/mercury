@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Loader } from "~/lib/icons/Loader";
 import { View } from "react-native";
-import { RouteScreenProps } from "react-native-actions-sheet";
+import ActionSheet, { RouteScreenProps } from "react-native-actions-sheet";
 import Animated, {} from "react-native-reanimated";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
@@ -10,13 +10,17 @@ import { Check } from "~/lib/icons/Check";
 import { cn } from "~/lib/utils";
 import { v4 as uuidv4 } from "uuid";
 import { generateNewWallet } from "~/lib/icons/services/wallet";
+import { useWalletData } from "~/context/WalletDataContext";
+import { useRotationAnimation } from "~/hooks/useRotation";
+import ActionButton from "../ActionButton";
+import { getAddressFromPrivateKey } from "@stacks/transactions";
 
 export function GenerateWalletRoute({
 	router,
-}: RouteScreenProps<"generate-wallet-sheet", "generate-wallet">) {
-	// const { setWalletData } = useWalletData();
+}: RouteScreenProps<"wallet-sheet-with-router", "generate-wallet">) {
+	const { setWalletData } = useWalletData();
 	const [isGenerating, setIsGenerating] = useState(false);
-	// const rotationAnimation = useRotationAnimation();
+	const rotationAnimation = useRotationAnimation();
 	const tips = [
 		{ id: 1, text: "Make sure no one can see your screen" },
 		{ id: 2, text: "Have a pen and paper ready to write it down" },
@@ -48,7 +52,9 @@ export function GenerateWalletRoute({
 					>
 						<Text>Cancel</Text>
 					</Button>
-					<Button
+					<ActionButton
+						text={isGenerating ? "Generating ..." : "Generate Wallet"}
+						loading={isGenerating}
 						onPress={async () => {
 							setIsGenerating(true);
 							try {
@@ -57,28 +63,22 @@ export function GenerateWalletRoute({
 									shortUUID.split("-")[0],
 									"mainnet",
 								);
+								await setWalletData({
+									stxPrivateKey: wallet.accounts[0].stxPrivateKey,
+									address: getAddressFromPrivateKey(
+										wallet.accounts[0].stxPrivateKey,
+									),
+									mnemonic,
+								});
 								setIsGenerating(false);
-								router.navigate("seed-phrases", {
+								router.navigate("wallet-generated-route", {
 									payload: { phrases: mnemonic },
 								});
 							} catch (err) {
 								console.error(err);
 							}
 						}}
-						disabled={isGenerating}
-						className="gap-3 items-center flex-row flex-1"
-					>
-						{isGenerating ? (
-							<Animated.View className={cn("")}>
-								<Loader
-									className="text-foreground"
-									size={18}
-									strokeWidth={1.25}
-								/>
-							</Animated.View>
-						) : null}
-						<Text>{isGenerating ? "Generating ..." : "Generate Wallet"}</Text>
-					</Button>
+					/>
 				</View>
 			</View>
 		</View>

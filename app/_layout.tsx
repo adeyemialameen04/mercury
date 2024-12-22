@@ -17,6 +17,7 @@ import { PortalHost } from "@rn-primitives/portal";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
 import "~/lib/sheets";
 import { SheetProvider } from "react-native-actions-sheet";
+import { WalletDataProvider } from "~/context/WalletDataContext";
 
 const LIGHT_THEME: Theme = {
 	...DefaultTheme,
@@ -71,19 +72,21 @@ export default function RootLayout() {
 
 	return (
 		<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-			<SheetProvider>
-				<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-				<Stack>
-					<Stack.Screen
-						name="index"
-						options={{
-							title: "Mercury",
-							headerShown: false,
-						}}
-					/>
-				</Stack>
-			</SheetProvider>
-			<PortalHost />
+			<WalletDataProvider>
+				<SheetProvider>
+					<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+					<Stack>
+						<Stack.Screen
+							name="index"
+							options={{
+								title: "Mercury",
+								headerShown: false,
+							}}
+						/>
+					</Stack>
+				</SheetProvider>
+				<PortalHost />
+			</WalletDataProvider>
 		</ThemeProvider>
 	);
 }

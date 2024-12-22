@@ -9,7 +9,7 @@ declare module "react-native-actions-sheet" {
 		"wallet-sheet-with-router": SheetDefinition<{
 			routes: {
 				"generate-wallet": RouteDefinition;
-				"seed-phrases": RouteDefinition<{
+				"wallet-generated-route": RouteDefinition<{
 					payload: {
 						phrases: string;
 					};

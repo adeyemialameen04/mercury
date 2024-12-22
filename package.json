@@ -30,6 +30,7 @@
     "clsx": "^2.1.1",
     "crypto-browserify": "^3.12.1",
     "expo": "^52.0.21",
+    "expo-clipboard": "~7.0.0",
     "expo-linking": "~7.0.3",
     "expo-navigation-bar": "~4.0.6",
     "expo-router": "~4.0.14",
