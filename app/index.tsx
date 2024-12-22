@@ -1,95 +1,69 @@
-import * as React from 'react';
-import { View } from 'react-native';
-import Animated, { FadeInUp, FadeOutDown, LayoutAnimationConfig } from 'react-native-reanimated';
-import { Info } from '~/lib/icons/Info';
-import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
-import { Button } from '~/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '~/components/ui/card';
-import { Progress } from '~/components/ui/progress';
-import { Text } from '~/components/ui/text';
-import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
-
-const GITHUB_AVATAR_URI =
-  'https://i.pinimg.com/originals/ef/a2/8d/efa28d18a04e7fa40ed49eeb0ab660db.jpg';
+import { Link } from "expo-router";
+import { useState } from "react";
+import { SafeAreaView, ScrollView, View } from "react-native";
+import { Button } from "~/components/ui/button";
+import { Checkbox } from "~/components/ui/checkbox";
+import { Text } from "~/components/ui/text";
+import { H2 } from "~/components/ui/typography";
 
 export default function Screen() {
-  const [progress, setProgress] = React.useState(78);
+	const [checked, setChecked] = useState(false);
+	const [showWalletOptions, setShowWalletOptions] = useState(false);
 
-  function updateProgressValue() {
-    setProgress(Math.floor(Math.random() * 100));
-  }
-  return (
-    <View className='flex-1 justify-center items-center gap-5 p-6 bg-secondary/30'>
-      <Card className='w-full max-w-sm p-6 rounded-2xl'>
-        <CardHeader className='items-center'>
-          <Avatar alt="Rick Sanchez's Avatar" className='w-24 h-24'>
-            <AvatarImage source={{ uri: GITHUB_AVATAR_URI }} />
-            <AvatarFallback>
-              <Text>RS</Text>
-            </AvatarFallback>
-          </Avatar>
-          <View className='p-3' />
-          <CardTitle className='pb-2 text-center'>Rick Sanchez</CardTitle>
-          <View className='flex-row'>
-            <CardDescription className='text-base font-semibold'>Scientist</CardDescription>
-            <Tooltip delayDuration={150}>
-              <TooltipTrigger className='px-2 pb-0.5 active:opacity-50'>
-                <Info size={14} strokeWidth={2.5} className='w-4 h-4 text-foreground/70' />
-              </TooltipTrigger>
-              <TooltipContent className='py-2 px-4 shadow'>
-                <Text className='native:text-lg'>Freelance</Text>
-              </TooltipContent>
-            </Tooltip>
-          </View>
-        </CardHeader>
-        <CardContent>
-          <View className='flex-row justify-around gap-3'>
-            <View className='items-center'>
-              <Text className='text-sm text-muted-foreground'>Dimension</Text>
-              <Text className='text-xl font-semibold'>C-137</Text>
-            </View>
-            <View className='items-center'>
-              <Text className='text-sm text-muted-foreground'>Age</Text>
-              <Text className='text-xl font-semibold'>70</Text>
-            </View>
-            <View className='items-center'>
-              <Text className='text-sm text-muted-foreground'>Species</Text>
-              <Text className='text-xl font-semibold'>Human</Text>
-            </View>
-          </View>
-        </CardContent>
-        <CardFooter className='flex-col gap-3 pb-0'>
-          <View className='flex-row items-center overflow-hidden'>
-            <Text className='text-sm text-muted-foreground'>Productivity:</Text>
-            <LayoutAnimationConfig skipEntering>
-              <Animated.View
-                key={progress}
-                entering={FadeInUp}
-                exiting={FadeOutDown}
-                className='w-11 items-center'
-              >
-                <Text className='text-sm font-bold text-sky-600'>{progress}%</Text>
-              </Animated.View>
-            </LayoutAnimationConfig>
-          </View>
-          <Progress value={progress} className='h-2' indicatorClassName='bg-sky-600' />
-          <View />
-          <Button
-            variant='outline'
-            className='shadow shadow-foreground/5'
-            onPress={updateProgressValue}
-          >
-            <Text>Update</Text>
-          </Button>
-        </CardFooter>
-      </Card>
-    </View>
-  );
+	const handleContinue = () => {
+		setShowWalletOptions(true);
+	};
+
+	return (
+		<SafeAreaView className="flex-1">
+			<ScrollView className="flex-1">
+				<View className="flex-1 gap-6 p-6">
+					<H2 className="text-center"> Welcome to Mercury</H2>
+					<Text className="text-base text-center mb-4">
+						Mercury is the fastest trading bot on the Stacks chain. Execute
+						trades instantly, set up automations like Limit Orders, DCA,
+						Copy-trading and Sniping with unmatched speed and reliability.
+					</Text>
+					{!showWalletOptions && (
+						<View>
+							<Text className="text-sm text-muted-foreground text-center mb-6">
+								By continuing, you'll create a crypto wallet that connects with
+								Mercury to enable instant swaps and real-time data.
+							</Text>
+							<View className="flex-row items-center justify-center mb-6">
+								<Checkbox
+									checked={checked}
+									onCheckedChange={setChecked}
+									className="mr-2"
+								/>
+								<Text className="text-sm text-muted-foreground flex-shrink">
+									I accept the{" "}
+									<Link href={"/terms"}>
+										<Text className="text-primary font-medium">
+											Terms of Use
+										</Text>
+									</Link>{" "}
+									and{" "}
+									<Link href={"/privacy"}>
+										<Text className="text-primary font-medium">
+											Privacy Policy
+										</Text>
+									</Link>
+								</Text>
+							</View>
+							<Button
+								onPress={handleContinue}
+								disabled={!checked}
+								className="w-full py-4"
+							>
+								<Text className="font-semibold">Continue</Text>
+							</Button>
+						</View>
+					)}
+
+					{/* {showWalletOptions && <WalletOptions />} */}
+				</View>
+			</ScrollView>
+		</SafeAreaView>
+	);
 }
