@@ -1,69 +1,71 @@
-import { Link } from "expo-router";
-import { useState } from "react";
-import { SafeAreaView, ScrollView, View } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { useVideoPlayer, VideoView } from "expo-video";
 import { Button } from "~/components/ui/button";
-import { Checkbox } from "~/components/ui/checkbox";
 import { Text } from "~/components/ui/text";
-import { H2 } from "~/components/ui/typography";
-import WalletOptions from "~/components/wallet/WalletOptions";
+import { H4 } from "~/components/ui/typography";
+import { SheetManager } from "react-native-actions-sheet";
+import { Badge } from "~/components/ui/badge";
 
-export default function Screen() {
-	const [checked, setChecked] = useState(false);
-	const [showWalletOptions, setShowWalletOptions] = useState(false);
+const introVidUrl =
+	"https://res.cloudinary.com/dzsomaq4z/video/upload/v1734893537/intro_o9wkhc.mp4";
 
-	const handleContinue = () => {
-		setShowWalletOptions(true);
-	};
+export default function Page() {
+	const player = useVideoPlayer(introVidUrl, (player) => {
+		if (player) {
+			player.loop = true;
+			player.play();
+		}
+	});
 
 	return (
-		<SafeAreaView className="flex-1">
-			<ScrollView className="flex-1">
-				<View className="flex-1 gap-6 p-6">
-					<H2 className="text-center"> Welcome to Mercury</H2>
-					<Text className="text-base text-center mb-4">
-						Mercury is the fastest trading bot on the Stacks chain. Execute
-						trades instantly, set up automations like Limit Orders, DCA,
-						Copy-trading and Sniping with unmatched speed and reliability.
-					</Text>
-					{!showWalletOptions && (
-						<View>
-							<Text className="text-sm text-muted-foreground text-center mb-6">
-								By continuing, you'll create a crypto wallet that connects with
-								Mercury to enable instant swaps and real-time data.
-							</Text>
-							<View className="flex-row items-center justify-center mb-6">
-								<Checkbox
-									checked={checked}
-									onCheckedChange={setChecked}
-									className="mr-2"
-								/>
-								<Text className="text-sm text-muted-foreground flex-shrink">
-									I accept the{" "}
-									<Link href={"/terms"}>
-										<Text className="text-primary font-medium">
-											Terms of Use
-										</Text>
-									</Link>{" "}
-									and{" "}
-									<Link href={"/privacy"}>
-										<Text className="text-primary font-medium">
-											Privacy Policy
-										</Text>
-									</Link>
-								</Text>
-							</View>
-							<Button
-								onPress={handleContinue}
-								disabled={!checked}
-								className="w-full py-4"
-							>
-								<Text className="font-semibold">Continue</Text>
-							</Button>
-						</View>
-					)}
-					{showWalletOptions && <WalletOptions />}
-				</View>
-			</ScrollView>
-		</SafeAreaView>
+		<View className="flex-1 justify-between flex flex-col">
+			<VideoView
+				player={player}
+				allowsFullscreen
+				allowsPictureInPicture={false}
+				style={styles.video}
+				nativeControls={false}
+				contentFit="cover"
+			/>
+			<View className="mt-[80px] p-[20px]">
+				<H4 className="text-white text-2xl uppercase font-black">
+					Ready to change the way you degen?
+				</H4>
+			</View>
+			<View className="flex items-center mb-[60px] px-[10px] flex-row gap-4 justify-center">
+				<Button
+					variant="secondary"
+					className="flex-1 relative rounded-full"
+					size={"lg"}
+					onPress={() => {
+						SheetManager.show("wallet-sheet-with-router");
+					}}
+				>
+					<Text className="font-semibold">Generate Wallet</Text>
+					<Badge className="absolute -right-2 -top-3 bg-primary">
+						<Text className="text-xs">Suggested</Text>
+					</Badge>
+				</Button>
+
+				<Button
+					variant="secondary"
+					className="flex-1 rounded-full"
+					size={"lg"}
+					onPress={() => {
+						SheetManager.show("import-wallet-sheet");
+					}}
+				>
+					<Text className="font-semibold">Import Wallet</Text>
+				</Button>
+			</View>
+		</View>
 	);
 }
+
+const styles = StyleSheet.create({
+	video: {
+		width: "100%",
+		height: "100%",
+		position: "absolute",
+	},
+});
