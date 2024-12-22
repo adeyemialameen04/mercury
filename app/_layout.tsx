@@ -14,8 +14,9 @@ import { Platform } from "react-native";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { PortalHost } from "@rn-primitives/portal";
-import { ThemeToggle } from "~/components/ThemeToggle";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
+import "~/lib/sheets";
+import { SheetProvider } from "react-native-actions-sheet";
 
 const LIGHT_THEME: Theme = {
 	...DefaultTheme,
@@ -70,16 +71,18 @@ export default function RootLayout() {
 
 	return (
 		<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-			<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-			<Stack>
-				<Stack.Screen
-					name="index"
-					options={{
-						title: "Mercury",
-						headerShown: false,
-					}}
-				/>
-			</Stack>
+			<SheetProvider>
+				<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+				<Stack>
+					<Stack.Screen
+						name="index"
+						options={{
+							title: "Mercury",
+							headerShown: false,
+						}}
+					/>
+				</Stack>
+			</SheetProvider>
 			<PortalHost />
 		</ThemeProvider>
 	);

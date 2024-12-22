@@ -5,6 +5,7 @@ import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Text } from "~/components/ui/text";
 import { H2 } from "~/components/ui/typography";
+import WalletOptions from "~/components/wallet/WalletOptions";
 
 export default function Screen() {
 	const [checked, setChecked] = useState(false);
@@ -60,8 +61,7 @@ export default function Screen() {
 							</Button>
 						</View>
 					)}
-
-					{/* {showWalletOptions && <WalletOptions />} */}
+					{showWalletOptions && <WalletOptions />}
 				</View>
 			</ScrollView>
 		</SafeAreaView>
