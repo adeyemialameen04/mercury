@@ -14,11 +14,12 @@ import { Copy } from "~/lib/icons/Copy";
 import * as Clipboard from "expo-clipboard";
 import { cn } from "~/lib/utils";
 import { useWalletData } from "~/context/WalletDataContext";
+import { useWalletStore } from "~/store/walletStore";
 
 export default function WalletGeneratedRoute({
 	router,
 }: RouteScreenProps<"wallet-sheet-with-router", "wallet-generated-route">) {
-	const { walletData } = useWalletData();
+	const { walletData } = useWalletStore();
 	const [isHidden, setIsHidden] = useState(false);
 	const [copied, setCopied] = useState(false);
 	const params = useSheetRouteParams("generate-wallet-sheet", "seed-phrases");
