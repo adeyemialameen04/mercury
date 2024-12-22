@@ -9,7 +9,7 @@ import { Muted } from "~/components/ui/typography";
 import { Check } from "~/lib/icons/Check";
 import { cn } from "~/lib/utils";
 import { v4 as uuidv4 } from "uuid";
-import { generateNewWallet } from "~/lib/icons/services/wallet";
+import { generateNewWallet } from "~/lib/services/wallet";
 import { useWalletData } from "~/context/WalletDataContext";
 import { useRotationAnimation } from "~/hooks/useRotation";
 import ActionButton from "../ActionButton";
