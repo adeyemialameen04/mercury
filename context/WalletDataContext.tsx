@@ -17,6 +17,7 @@ interface WalletDataContextType {
 	setWalletData: (data: WalletData | null) => Promise<void>;
 	deleteWallet: () => Promise<void>;
 	isLoading: boolean;
+	isWalletConnected: boolean;
 }
 
 const WalletDataContext = createContext<WalletDataContextType | undefined>(
@@ -40,12 +41,14 @@ export const WalletDataProvider: React.FC<WalletDataProviderProps> = ({
 }) => {
 	const [walletData, setWalletDataState] = useState<WalletData | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
+	const [isWalletConnected, setIsWalletConnected] = useState(false);
 
 	useEffect(() => {
 		const loadWalletData = async () => {
 			try {
 				const data = await retrieveWalletData();
 				setWalletDataState(data);
+				setIsWalletConnected(!!data);
 			} catch (error) {
 				console.error("Failed to load wallet data:", error);
 			} finally {
@@ -59,10 +62,12 @@ export const WalletDataProvider: React.FC<WalletDataProviderProps> = ({
 	const deleteWallet = async () => {
 		await deleteWalletData();
 		setWalletDataState(null);
+		setIsWalletConnected(false);
 	};
 
 	const setWalletData = async (data: WalletData | null) => {
 		setWalletDataState(data);
+		setIsWalletConnected(!!data);
 		if (data) {
 			await storeWalletData(data);
 		}
@@ -70,7 +75,13 @@ export const WalletDataProvider: React.FC<WalletDataProviderProps> = ({
 
 	return (
 		<WalletDataContext.Provider
-			value={{ walletData, setWalletData, isLoading, deleteWallet }}
+			value={{
+				walletData,
+				setWalletData,
+				isLoading,
+				deleteWallet,
+				isWalletConnected,
+			}}
 		>
 			{children}
 		</WalletDataContext.Provider>
