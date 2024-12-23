@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
 import React from "react";
+import HomeHeader from "~/components/HomeHeader";
 import colors from "~/lib/colors";
 import { Home } from "~/lib/icons/Home";
 import { Settings } from "~/lib/icons/Settings";
@@ -18,6 +19,7 @@ export default function TabLayout() {
 					tabBarIcon: ({ size, color }) => (
 						<Home strokeWidth={1.25} size={size} color={color} />
 					),
+					header: () => <HomeHeader />,
 				}}
 			/>
 			<Tabs.Screen

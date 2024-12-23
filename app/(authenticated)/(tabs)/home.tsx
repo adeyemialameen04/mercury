@@ -11,6 +11,8 @@ import { Text } from "~/components/ui/text";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import ActionButton from "~/components/ActionButton";
 import { useWalletStore } from "~/store/walletStore";
+import RecentTransactions from "~/components/home/RecentTransactions";
+import HomeActions from "~/components/home/HomeActions";
 
 export const checkAccountBalance = async (stxAddr: string) => {
 	try {
@@ -100,7 +102,8 @@ export default function Page() {
 					</View>
 				</View>
 			</View>
-
+			<HomeActions />
+			<RecentTransactions />
 			<Tabs
 				value={value}
 				onValueChange={setValue}

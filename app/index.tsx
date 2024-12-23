@@ -1,5 +1,5 @@
 import { View, StyleSheet } from "react-native";
-import { useVideoPlayer, VideoView } from "expo-video";
+import { useVideoPlayer, VideoView, VideoSource } from "expo-video";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { H4 } from "~/components/ui/typography";
@@ -8,9 +8,18 @@ import { Badge } from "~/components/ui/badge";
 
 const introVidUrl =
 	"https://res.cloudinary.com/dzsomaq4z/video/upload/v1734893537/intro_o9wkhc.mp4";
+const assetId = require("~/assets/videos/intro.mp4");
+
+const videoSource: VideoSource = {
+	assetId,
+	metadata: {
+		title: "Intro Video",
+		artist: "Not copyrighted",
+	},
+};
 
 export default function Page() {
-	const player = useVideoPlayer(introVidUrl, (player) => {
+	const player = useVideoPlayer(videoSource, (player) => {
 		if (player) {
 			player.loop = true;
 			player.play();
