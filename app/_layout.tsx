@@ -1,5 +1,4 @@
 import "~/global.css";
-import Colors from "@/constants/Colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
 	DarkTheme,
@@ -17,8 +16,9 @@ import { PortalHost } from "@rn-primitives/portal";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
 import "~/lib/sheets";
 import { SheetProvider } from "react-native-actions-sheet";
-import { useWalletData, WalletDataProvider } from "~/context/WalletDataContext";
 import { useRouter } from "expo-router";
+import { useWalletStore } from "~/store/walletStore";
+import { QueryClient, QueryClientProvider } from "react-query";
 const LIGHT_THEME: Theme = {
 	...DefaultTheme,
 	colors: NAV_THEME.light,
@@ -29,11 +29,13 @@ const DARK_THEME: Theme = {
 };
 export { ErrorBoundary } from "expo-router";
 SplashScreen.preventAutoHideAsync();
+const queryClient = new QueryClient();
+
 // Create a separate component for the main app content
 function AppContent() {
 	const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
 	const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
-	const { isWalletConnected } = useWalletData();
+	const { isWalletConnected } = useWalletStore();
 	const router = useRouter();
 	const segments = useSegments();
 
@@ -62,7 +64,6 @@ function AppContent() {
 		});
 	}, []);
 
-	// Separate effect for navigation, with proper dependencies and mounted check
 	React.useEffect(() => {
 		if (!isColorSchemeLoaded) return; // Wait for initial loading to complete
 
@@ -85,32 +86,30 @@ function AppContent() {
 	return (
 		<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
 			<SheetProvider>
-				<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-				<Stack>
-					<Stack.Screen
-						name="index"
-						options={{
-							title: "Mercury",
-							headerShown: false,
-						}}
-					/>
-					{/* Add screens for authenticated routes */}
-					<Stack.Screen
-						name="(authenticated)/(tabs)"
-						options={{
-							headerShown: false,
-						}}
-					/>
-				</Stack>
+				<QueryClientProvider client={queryClient}>
+					<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+					<Stack>
+						<Stack.Screen
+							name="index"
+							options={{
+								title: "Mercury",
+								headerShown: false,
+							}}
+						/>
+						{/* Add screens for authenticated routes */}
+						<Stack.Screen
+							name="(authenticated)/(tabs)"
+							options={{
+								headerShown: false,
+							}}
+						/>
+					</Stack>
+				</QueryClientProvider>
 			</SheetProvider>
 			<PortalHost />
 		</ThemeProvider>
 	);
 }
 export default function RootLayout() {
-	return (
-		<WalletDataProvider>
-			<AppContent />
-		</WalletDataProvider>
-	);
+	return <AppContent />;
 }

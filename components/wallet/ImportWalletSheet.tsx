@@ -13,18 +13,17 @@ import { Wallet, generateWallet } from "@stacks/wallet-sdk";
 import Animated from "react-native-reanimated";
 import { useRotationAnimation } from "~/hooks/useRotation";
 import { Loader } from "~/lib/icons/Loader";
-import { useWalletData } from "~/context/WalletDataContext";
+import { useWalletStore } from "~/store/walletStore";
 
 export default function ImportWalletSheet(
 	props: SheetProps<"import-wallet-sheet">,
 ) {
 	const rotationAnimation = useRotationAnimation();
-	const { setWalletData } = useWalletData();
+	const { setWalletData } = useWalletStore();
 	const [isImporting, setIsImporting] = React.useState(false);
 	const [error, setError] = React.useState<string | null>(null);
 	const inputRefs = useRef<Array<any>>(Array(24).fill(null));
 	const [phrases, setPhrases] = React.useState<string[]>(
-		// "rent wide alcohol develop slender proof consider door play similar gloom pencil flush weekend clip nation naive strong rib mercy donor alcohol electric enforce".split(
 		"utility still afford spoil orange kite trouble surprise stock call coil review cup offer one destroy cloud guide coin blouse eagle hurt april desk".split(
 			" ",
 		),

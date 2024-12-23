@@ -1,26 +1,21 @@
 import React, { useState } from "react";
-import { Loader } from "~/lib/icons/Loader";
 import { View } from "react-native";
-import ActionSheet, { RouteScreenProps } from "react-native-actions-sheet";
-import Animated, {} from "react-native-reanimated";
+import { RouteScreenProps } from "react-native-actions-sheet";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { Muted } from "~/components/ui/typography";
 import { Check } from "~/lib/icons/Check";
-import { cn } from "~/lib/utils";
 import { v4 as uuidv4 } from "uuid";
 import { generateNewWallet } from "~/lib/services/wallet";
-import { useWalletData } from "~/context/WalletDataContext";
-import { useRotationAnimation } from "~/hooks/useRotation";
 import ActionButton from "../ActionButton";
 import { getAddressFromPrivateKey } from "@stacks/transactions";
+import { useWalletStore } from "~/store/walletStore";
 
 export function GenerateWalletRoute({
 	router,
 }: RouteScreenProps<"wallet-sheet-with-router", "generate-wallet">) {
-	const { setWalletData } = useWalletData();
+	const { setWalletData } = useWalletStore();
 	const [isGenerating, setIsGenerating] = useState(false);
-	const rotationAnimation = useRotationAnimation();
 	const tips = [
 		{ id: 1, text: "Make sure no one can see your screen" },
 		{ id: 2, text: "Have a pen and paper ready to write it down" },
