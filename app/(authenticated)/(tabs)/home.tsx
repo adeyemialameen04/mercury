@@ -13,18 +13,7 @@ import ActionButton from "~/components/ActionButton";
 import { useWalletStore } from "~/store/walletStore";
 import RecentTransactions from "~/components/home/RecentTransactions";
 import HomeActions from "~/components/home/HomeActions";
-
-export const checkAccountBalance = async (stxAddr: string) => {
-	try {
-		const { data } = await axios.get(
-			`https://api.hiro.so/extended/v1/address/${stxAddr}/balances`,
-		);
-		return data;
-	} catch (err) {
-		console.error(err);
-		throw err;
-	}
-};
+import { getAccountBalance } from "~/queries/balance";
 
 export default function Page() {
 	const [copied, setCopied] = useState(false);
@@ -39,14 +28,14 @@ export default function Page() {
 		isRefetching,
 	} = useQuery(
 		[`balance-${walletData?.address}`],
-		() =>
-			walletData?.address ? checkAccountBalance(walletData.address) : null,
+		() => (walletData?.address ? getAccountBalance(walletData.address) : null),
 		{
 			enabled: !!walletData?.address,
 		},
 	);
 
 	const copyToClipboard = async () => {
+		console.log(JSON.stringify(balanceData, null, 2));
 		if (walletData?.address) {
 			await Clipboard.setStringAsync(walletData?.address);
 			setCopied(true);
@@ -102,7 +91,7 @@ export default function Page() {
 					</View>
 				</View>
 			</View>
-			<HomeActions />
+			<HomeActions balance={balanceData} />
 			<RecentTransactions />
 			<Tabs
 				value={value}
