@@ -10,7 +10,6 @@ import { SplashScreen, Stack, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
 import { Platform } from "react-native";
-import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { PortalHost } from "@rn-primitives/portal";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
@@ -19,6 +18,7 @@ import { SheetProvider } from "react-native-actions-sheet";
 import { useRouter } from "expo-router";
 import { useWalletStore } from "~/store/walletStore";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { NAV_THEME } from "~/lib/colors";
 const LIGHT_THEME: Theme = {
 	...DefaultTheme,
 	colors: NAV_THEME.light,
@@ -85,8 +85,8 @@ function AppContent() {
 
 	return (
 		<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-			<SheetProvider>
-				<QueryClientProvider client={queryClient}>
+			<QueryClientProvider client={queryClient}>
+				<SheetProvider>
 					<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
 					<Stack>
 						<Stack.Screen
@@ -104,8 +104,8 @@ function AppContent() {
 							}}
 						/>
 					</Stack>
-				</QueryClientProvider>
-			</SheetProvider>
+				</SheetProvider>
+			</QueryClientProvider>
 			<PortalHost />
 		</ThemeProvider>
 	);
