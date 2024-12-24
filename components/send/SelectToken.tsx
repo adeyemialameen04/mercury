@@ -9,6 +9,8 @@ import { useQuery } from "react-query";
 import React from "react";
 import { TokenItemSkeleton } from "../loading/TokenItemSkeleton";
 import { TouchableOpacity } from "react-native";
+import { Link } from "expo-router";
+import { SheetManager } from "react-native-actions-sheet";
 
 const blurhash =
 	"|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
@@ -79,33 +81,41 @@ const TokenItem = ({ item }: { item: any }) => {
 
 	return (
 		<TouchableOpacity className="p-6">
-			<View className="flex justify-between flex-row items-end">
-				<View className="flex gap-3 flex-row flex-1">
-					<View>
-						<Image
-							source={item.image}
-							placeholder={{ blurhash }}
-							contentFit="cover"
-							style={{ height: 40, width: 40, borderRadius: 20 }}
-							transition={1000}
-						/>
+			<Link
+				href={{
+					pathname: "/send/[contract]",
+					params: { contract: item.contract },
+				}}
+				onPress={() => SheetManager.hide("select-token")}
+			>
+				<View className="flex justify-between flex-row items-end">
+					<View className="flex gap-3 flex-row flex-1">
+						<View>
+							<Image
+								source={item.image}
+								placeholder={{ blurhash }}
+								contentFit="cover"
+								style={{ height: 40, width: 40, borderRadius: 20 }}
+								transition={1000}
+							/>
+						</View>
+						<View className="flex flex-col justify-center gap-1">
+							<Text className="uppercase font-semibold">{item.ticker}</Text>
+							<Muted>{item.name}</Muted>
+						</View>
 					</View>
-					<View className="flex flex-col justify-center gap-1">
-						<Text className="uppercase font-semibold">{item.ticker}</Text>
-						<Muted>{item.name}</Muted>
+					<View className="flex flex-col items-end gap-3">
+						<Text className="font-medium">{balAmt.toLocaleString()}</Text>
+						<View className="flex flex-row items-center gap-1">
+							{item.currentPrice ? (
+								<Small>{balAmt * item.currentPrice} USD</Small>
+							) : (
+								<Small>N/A</Small>
+							)}
+						</View>
 					</View>
 				</View>
-				<View className="flex flex-col items-end gap-3">
-					<Text className="font-medium">{balAmt.toLocaleString()}</Text>
-					<View className="flex flex-row items-center gap-1">
-						{item.currentPrice ? (
-							<Small>{balAmt * item.currentPrice} USD</Small>
-						) : (
-							<Small>N/A</Small>
-						)}
-					</View>
-				</View>
-			</View>
+			</Link>
 		</TouchableOpacity>
 	);
 };

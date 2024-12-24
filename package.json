@@ -14,15 +14,19 @@
     "postinstall": "npx tailwindcss -i ./global.css -o ./node_modules/.cache/nativewind/global.css"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.9.1",
     "@peculiar/webcrypto": "^1.5.0",
     "@react-native-async-storage/async-storage": "^2.1.0",
     "@react-navigation/native": "^7.0.14",
     "@rn-primitives/avatar": "~1.1.0",
     "@rn-primitives/checkbox": "^1.1.0",
+    "@rn-primitives/label": "^1.1.0",
     "@rn-primitives/portal": "~1.1.0",
     "@rn-primitives/progress": "~1.1.0",
     "@rn-primitives/slot": "^1.1.0",
     "@rn-primitives/tabs": "^1.1.0",
+    "@rn-primitives/toggle": "^1.1.0",
+    "@rn-primitives/toggle-group": "^1.1.0",
     "@rn-primitives/tooltip": "~1.1.0",
     "@rn-primitives/types": "^1.1.0",
     "@shopify/flash-list": "^1.7.2",
@@ -51,6 +55,7 @@
     "process": "^0.11.10",
     "react": "18.3.1",
     "react-dom": "18.3.1",
+    "react-hook-form": "^7.54.2",
     "react-native": "0.76.5",
     "react-native-actions-sheet": "^0.9.7",
     "react-native-blurhash": "^2.1.0",
@@ -69,6 +74,7 @@
     "tailwindcss-animate": "^1.0.7",
     "text-encoding": "^0.7.0",
     "uuid": "^11.0.3",
+    "zod": "^3.24.1",
     "zustand": "^5.0.2"
   },
   "devDependencies": {
