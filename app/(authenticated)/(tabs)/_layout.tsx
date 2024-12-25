@@ -31,6 +31,8 @@ export default function TabLayout() {
 					tabBarIcon: ({ size, color }) => (
 						<Send strokeWidth={1.25} size={size} color={color} />
 					),
+					headerShown: false,
+					tabBarStyle: { display: "none" },
 				}}
 			/>
 			<Tabs.Screen
