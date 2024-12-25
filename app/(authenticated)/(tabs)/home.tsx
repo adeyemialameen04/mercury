@@ -35,7 +35,6 @@ export default function Page() {
 	);
 
 	const copyToClipboard = async () => {
-		console.log(JSON.stringify(balanceData, null, 2));
 		if (walletData?.address) {
 			await Clipboard.setStringAsync(walletData?.address);
 			setCopied(true);

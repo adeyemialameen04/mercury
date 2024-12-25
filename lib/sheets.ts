@@ -1,7 +1,8 @@
 import { RouteDefinition } from "react-native-actions-sheet";
 import { registerSheet, SheetDefinition } from "react-native-actions-sheet";
-import { FormData } from "~/app/(authenticated)/(tabs)/send/[contract]";
+import NetworkFeeSheet from "~/app/(authenticated)/(tabs)/send/NewtworkFeeSheet";
 import AmountSheet from "~/components/send/AmountSheet";
+import ConfirmTxSheet from "~/components/send/ConfirmTxSheet";
 import SelectToken from "~/components/send/SelectToken";
 import ImportWalletSheet from "~/components/wallet/ImportWalletSheet";
 import { WalletSheetWithRouter } from "~/components/wallet/WalletSheetWithRouter";
@@ -12,6 +13,8 @@ registerSheet("wallet-sheet-with-router", WalletSheetWithRouter);
 registerSheet("import-wallet-sheet", ImportWalletSheet);
 registerSheet("select-token", SelectToken);
 registerSheet("amount-sheet", AmountSheet);
+registerSheet("network-fee", NetworkFeeSheet);
+registerSheet("confirm-transaction", ConfirmTxSheet);
 
 declare module "react-native-actions-sheet" {
 	interface Sheets {
@@ -31,13 +34,17 @@ declare module "react-native-actions-sheet" {
 				balance: AccountBalance;
 			};
 		}>;
-		"amount-sheet": SheetDefinition<{
-			payload: {
-				buyParams: FormData;
-				token: FtMetadataResponse;
-				balance: string;
-			};
+		"network-fee": SheetDefinition;
+		"confirm-transaction": SheetDefinition<{
+			payload: { tokenData: any; buyParams: any };
 		}>;
+		// "amount-sheet": SheetDefinition<{
+		// 	payload: {
+		// 		buyParams: FormData;
+		// 		token: FtMetadataResponse;
+		// 		balance: string;
+		// 	};
+		// }>;
 	}
 }
 

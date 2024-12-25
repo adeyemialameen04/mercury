@@ -1,5 +1,5 @@
 import { TouchableOpacity, View } from "react-native";
-import ActionSheet from "react-native-actions-sheet";
+import ActionSheet, { SheetManager } from "react-native-actions-sheet";
 import { SheetProps } from "react-native-actions-sheet";
 import { Text } from "../ui/text";
 import { z } from "zod";
@@ -30,7 +30,9 @@ export default function AmountSheet(props: SheetProps<"amount-sheet">) {
 	const buyParams = props.payload?.buyParams;
 	const tokenData = props.payload?.token;
 	const payloadBalance = Number.parseFloat(props.payload?.balance as string);
-	const tokenBalance = payloadBalance.toString();
+	const balAmt =
+		payloadBalance / Math.pow(10, tokenData.decimals ? tokenData.decimals : 6);
+	const tokenBalance = balAmt.toString();
 	const {
 		control,
 		handleSubmit,
@@ -39,7 +41,7 @@ export default function AmountSheet(props: SheetProps<"amount-sheet">) {
 	} = useForm<FormData>({
 		defaultValues: {
 			amount: "1",
-			fee: "0.001", // Set a default fee value
+			fee: "0.001",
 		},
 		resolver: zodResolver(createSchema(tokenBalance as string)),
 	});
@@ -58,9 +60,9 @@ export default function AmountSheet(props: SheetProps<"amount-sheet">) {
 				{tokenData ? (
 					<View className="gap-2 w-full">
 						<View className="flex-row justify-between items-center w-full">
-							<Label nativeID="amount">{tokenData.symbol} amount</Label>
+							<Label nativeID="amount">{tokenData.ticker} amount</Label>
 							<Muted>
-								Balance: {tokenBalance} {tokenData.symbol}
+								Balance: {tokenBalance} {tokenData.ticker}
 							</Muted>
 						</View>
 						<Controller
@@ -150,7 +152,11 @@ export default function AmountSheet(props: SheetProps<"amount-sheet">) {
 							)}
 						</View>
 						<View className="gap-3 flex-row mt-4">
-							<Button variant={"outline"} className="flex-1">
+							<Button
+								variant={"outline"}
+								className="flex-1"
+								onPress={async () => SheetManager.hide("amount-sheet")}
+							>
 								<Text>Cancel</Text>
 							</Button>
 
