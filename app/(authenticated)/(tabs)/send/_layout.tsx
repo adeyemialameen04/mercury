@@ -7,7 +7,6 @@ import { useQuery } from "react-query";
 import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
 import { Text } from "~/components/ui/text";
-import { Large } from "~/components/ui/typography";
 import { ArrowLeft } from "~/lib/icons/ArrowLeft";
 import { getTokenMetadata } from "~/queries/token";
 import { FtMetadataResponse } from "~/types/metadata";
@@ -54,6 +53,13 @@ export default function SendLayout() {
 							</BlurView>
 						);
 					},
+					presentation: "modal",
+				}}
+			/>
+			<Stack.Screen
+				name="amount"
+				options={{
+					headerShown: false,
 					presentation: "modal",
 				}}
 			/>

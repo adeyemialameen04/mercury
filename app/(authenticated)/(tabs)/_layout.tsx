@@ -27,12 +27,8 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="send"
 				options={{
-					title: "Send",
-					tabBarIcon: ({ size, color }) => (
-						<Send strokeWidth={1.25} size={size} color={color} />
-					),
 					headerShown: false,
-					tabBarStyle: { display: "none" },
+					href: null,
 				}}
 			/>
 			<Tabs.Screen

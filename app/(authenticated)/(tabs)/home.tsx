@@ -1,12 +1,7 @@
 import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { H3, H4, Muted } from "~/components/ui/typography";
-import { Copy } from "~/lib/icons/Copy";
-import axios from "axios";
-import { CheckCircle } from "~/lib/icons/CheckCircle";
-import * as Clipboard from "expo-clipboard";
 import { useQuery } from "react-query";
-import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import ActionButton from "~/components/ActionButton";
@@ -14,9 +9,9 @@ import { useWalletStore } from "~/store/walletStore";
 import RecentTransactions from "~/components/home/RecentTransactions";
 import HomeActions from "~/components/home/HomeActions";
 import { getAccountBalance } from "~/queries/balance";
+import CopyButton from "~/components/ui/Copy";
 
 export default function Page() {
-	const [copied, setCopied] = useState(false);
 	const { walletData, isLoading: isWalletDataLoading } = useWalletStore();
 	const [value, setValue] = useState("transfer");
 
@@ -34,15 +29,6 @@ export default function Page() {
 		},
 	);
 
-	const copyToClipboard = async () => {
-		console.log(JSON.stringify(balanceData, null, 2));
-		if (walletData?.address) {
-			await Clipboard.setStringAsync(walletData?.address);
-			setCopied(true);
-			setTimeout(() => setCopied(false), 3000);
-		}
-	};
-
 	return (
 		<ScrollView className="p-6 flex-1">
 			<View className="flex flex-col justify-between gap-4">
@@ -52,22 +38,7 @@ export default function Page() {
 						<Muted className="">
 							{isWalletDataLoading ? "..." : walletData?.address}
 						</Muted>
-						<Button
-							variant="outline"
-							size="icon"
-							onPress={copyToClipboard}
-							className="flex flex-row items-center gap-2"
-						>
-							{copied ? (
-								<CheckCircle
-									size={14}
-									className="text-primary"
-									strokeWidth={1.25}
-								/>
-							) : (
-								<Copy size={16} className="text-primary" strokeWidth={1.25} />
-							)}
-						</Button>
+						<CopyButton copyText={walletData?.address as string} />
 					</View>
 				</View>
 				<View className="flex justify-between  flex-row">

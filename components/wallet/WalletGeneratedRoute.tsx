@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View } from "react-native";
-import ActionSheet, {
+import {
 	RouteScreenProps,
 	useSheetRouteParams,
 } from "react-native-actions-sheet";
@@ -13,7 +13,6 @@ import { EyeOff } from "~/lib/icons/EyeOff";
 import { Copy } from "~/lib/icons/Copy";
 import * as Clipboard from "expo-clipboard";
 import { cn } from "~/lib/utils";
-import { useWalletData } from "~/context/WalletDataContext";
 import { useWalletStore } from "~/store/walletStore";
 
 export default function WalletGeneratedRoute({

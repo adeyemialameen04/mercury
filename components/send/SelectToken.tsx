@@ -17,7 +17,6 @@ const blurhash =
 
 const getTokens = async (coins: string[]) => {
 	try {
-		console.log(coins);
 		const { data } = await axios.post(`${XVERSE_API_BASE_URL}sip10/tokens`, {
 			currency: "USD",
 			coins: JSON.stringify(coins),
@@ -58,7 +57,12 @@ export default function SelectToken(props: SheetProps<"select-token">) {
 	});
 
 	return (
-		<ActionSheet id={props.sheetId}>
+		<ActionSheet
+			id={props.sheetId}
+			containerStyle={{
+				backgroundColor: "#27282A",
+			}}
+		>
 			<View className="flex flex-col gap-0">
 				{isLoading ? (
 					<View className="flex flex-col p-6 gap-4">
@@ -77,14 +81,23 @@ export default function SelectToken(props: SheetProps<"select-token">) {
 }
 
 const TokenItem = ({ item }: { item: any }) => {
-	const balAmt = parseInt(item.balance, 10) / Math.pow(10, item.decimals);
+	const balAmt =
+		parseInt(item.balance, 10) /
+		Math.pow(10, item.decimals ? item.decimals : 6);
 
 	return (
 		<TouchableOpacity className="p-6">
 			<Link
 				href={{
 					pathname: "/send/[contract]",
-					params: { contract: item.contract },
+					params: {
+						contract: item.contract,
+						tokenData: JSON.stringify({
+							...item,
+							formattedBalAmt: balAmt,
+							originalBal: item.balance,
+						}),
+					},
 				}}
 				onPress={() => SheetManager.hide("select-token")}
 			>
@@ -100,17 +113,23 @@ const TokenItem = ({ item }: { item: any }) => {
 							/>
 						</View>
 						<View className="flex flex-col justify-center gap-1">
-							<Text className="uppercase font-semibold">{item.ticker}</Text>
-							<Muted>{item.name}</Muted>
+							<Text className="uppercase font-semibold text-white">
+								{item.ticker}
+							</Text>
+							<Muted className="">{item.name}</Muted>
 						</View>
 					</View>
 					<View className="flex flex-col items-end gap-3">
-						<Text className="font-medium">{balAmt.toLocaleString()}</Text>
+						<Text className="font-medium text-white">
+							{balAmt.toLocaleString()}
+						</Text>
 						<View className="flex flex-row items-center gap-1">
 							{item.currentPrice ? (
-								<Small>{balAmt * item.currentPrice} USD</Small>
+								<Small className="text-white">
+									{(balAmt * item.currentPrice).toFixed(4)} USD
+								</Small>
 							) : (
-								<Small>N/A</Small>
+								<Small className="text-white">N/A</Small>
 							)}
 						</View>
 					</View>
