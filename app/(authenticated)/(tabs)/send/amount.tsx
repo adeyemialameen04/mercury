@@ -17,7 +17,7 @@ import { Label } from "~/components/ui/label";
 import { Button } from "~/components/ui/button";
 import { useRouter } from "expo-router";
 import { Muted, Small } from "~/components/ui/typography";
-import { SheetManager } from "react-native-actions-sheet";
+import { SheetManager, useSheetRouter } from "react-native-actions-sheet";
 import { TokenData } from "~/types/token";
 
 const createSchema = (balance: string) =>
@@ -35,6 +35,7 @@ const createSchema = (balance: string) =>
 type FormData = z.infer<ReturnType<typeof createSchema>>;
 
 export default function Page() {
+	const sheetRouter = useSheetRouter("confirm-tx-sheet");
 	const { tokenData: tokenDataStr, buyParams: buyParamsStr } =
 		useLocalSearchParams();
 	const buyParams = JSON.parse(buyParamsStr as string);
@@ -57,7 +58,7 @@ export default function Page() {
 	});
 
 	const onSubmit = async (values: FormData) => {
-		SheetManager.show("confirm-transaction", {
+		SheetManager.show("confirm-tx-sheet", {
 			payload: {
 				tokenData,
 				buyParams: {
