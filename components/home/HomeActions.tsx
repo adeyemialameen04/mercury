@@ -6,6 +6,8 @@ import { Small } from "../ui/typography";
 import { Pressable } from "react-native";
 import { SheetManager } from "react-native-actions-sheet";
 import { AccountBalance } from "~/types/balance";
+import { useRouter } from "expo-router";
+import { TokenData } from "~/types/token";
 
 const homeActions = [
 	{
@@ -26,7 +28,20 @@ const homeActions = [
 	},
 ];
 
-export default function HomeActions({ balance }: { balance: AccountBalance }) {
+export default function HomeActions({
+	balance,
+	from,
+	tokenData,
+	mergedTokens,
+	isLoading,
+}: {
+	balance?: AccountBalance;
+	from: string;
+	tokenData: TokenData;
+	mergedTokens?: any;
+	isLoading: boolean;
+}) {
+	const router = useRouter();
 	return (
 		<View className="flex flex-row gap-4 items-center justify-center my-4">
 			{homeActions.map((item) => (
@@ -35,9 +50,23 @@ export default function HomeActions({ balance }: { balance: AccountBalance }) {
 					key={item.route}
 					onPress={async () => {
 						if (item.route === "send") {
-							await SheetManager.show("select-token", {
-								payload: { balance },
-							});
+							console.log(1);
+							if (from === "list" && tokenData) {
+								console.log(2);
+								router.push({
+									pathname: "/(authenticated)/(tabs)/send/[contract]",
+									params: {
+										contract: tokenData.contract,
+										tokenData: JSON.stringify({
+											...tokenData,
+										}),
+									},
+								});
+							} else {
+								await SheetManager.show("select-token", {
+									payload: { mergedTokens, isLoading },
+								});
+							}
 						}
 					}}
 				>
