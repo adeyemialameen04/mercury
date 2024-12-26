@@ -7,7 +7,6 @@ import SelectToken from "~/components/send/SelectToken";
 import ImportWalletSheet from "~/components/wallet/ImportWalletSheet";
 import { WalletSheetWithRouter } from "~/components/wallet/WalletSheetWithRouter";
 import { AccountBalance } from "~/types/balance";
-import { FtMetadataResponse } from "~/types/metadata";
 
 registerSheet("wallet-sheet-with-router", WalletSheetWithRouter);
 registerSheet("import-wallet-sheet", ImportWalletSheet);

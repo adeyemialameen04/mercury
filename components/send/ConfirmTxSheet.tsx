@@ -9,20 +9,29 @@ import { Large, Muted } from "../ui/typography";
 import { Button } from "../ui/button";
 import ActionButton from "../ActionButton";
 import { useRouter } from "expo-router";
+import { TokenData } from "~/types/token";
+import { send } from "~/lib/services/send";
+import { useState } from "react";
+import { useWalletStore } from "~/store/walletStore";
+import { WalletData } from "~/types/wallet";
+
 const truncateAddress = (address) => {
 	if (!address) return "";
 	return `${address.slice(0, 6)}...${address.slice(-4)}`;
 };
+
 export default function ConfirmTxSheet(
 	props: SheetProps<"confirm-transaction">,
 ) {
-	const tokenData = props.payload?.tokenData;
+	const { walletData } = useWalletStore();
+	const tokenData: TokenData = props.payload?.tokenData;
+	const [isSending, setIsSending] = useState(false);
 	const buyParams = props.payload?.buyParams;
-	console.log(buyParams, tokenData);
 	const router = useRouter();
 	return (
 		<ActionSheet
 			id={props.sheetId}
+			closable={false}
 			containerStyle={{
 				backgroundColor: "#27282A",
 			}}
@@ -50,7 +59,7 @@ export default function ConfirmTxSheet(
 							</View>
 							<View className="flex flex-col">
 								<Text className="text-white font-semibold">
-									{tokenData.formattedBalAmt} {tokenData.ticker}
+									{buyParams.amount} {tokenData.ticker}
 								</Text>
 							</View>
 						</View>
@@ -67,10 +76,27 @@ export default function ConfirmTxSheet(
 							<Text>Cancel</Text>
 						</Button>
 						<ActionButton
-							loading
+							loading={isSending}
 							text="Confirm"
 							className="flex-1"
 							variant={"outline"}
+							onPress={async () => {
+								try {
+									setIsSending(true);
+									const txRes = await send(
+										buyParams,
+										tokenData,
+										walletData as WalletData,
+									);
+									console.log("Transaction result:", txRes);
+								} catch (error) {
+									console.error("Transaction failed:", error);
+									// Add appropriate error handling here
+									// You might want to show an error message to the user
+								} finally {
+									setIsSending(false);
+								}
+							}}
 						/>
 					</View>
 				</View>

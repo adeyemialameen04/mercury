@@ -18,6 +18,7 @@ import { Button } from "~/components/ui/button";
 import { useRouter } from "expo-router";
 import { Muted, Small } from "~/components/ui/typography";
 import { SheetManager } from "react-native-actions-sheet";
+import { TokenData } from "~/types/token";
 
 const createSchema = (balance: string) =>
 	z.object({
@@ -36,8 +37,8 @@ type FormData = z.infer<ReturnType<typeof createSchema>>;
 export default function Page() {
 	const { tokenData: tokenDataStr, buyParams: buyParamsStr } =
 		useLocalSearchParams();
-	const buyParams = JSON.parse(buyParamsStr);
-	const tokenData = JSON.parse(tokenDataStr);
+	const buyParams = JSON.parse(buyParamsStr as string);
+	const tokenData: TokenData = JSON.parse(tokenDataStr as string);
 	const tokenBalance = tokenData.formattedBalAmt.toString() as string;
 
 	const router = useRouter();
@@ -54,7 +55,6 @@ export default function Page() {
 		},
 		resolver: zodResolver(createSchema(tokenBalance)),
 	});
-	console.log(JSON.stringify(tokenData, null, 2));
 
 	const onSubmit = async (values: FormData) => {
 		SheetManager.show("confirm-transaction", {
@@ -116,7 +116,7 @@ export default function Page() {
 											</TouchableOpacity>
 										</View>
 									)}
-								/>{" "}
+								/>
 								<Muted className="self-end">
 									{tokenData.currentPrice * tokenData.formattedBalAmt} USD
 								</Muted>

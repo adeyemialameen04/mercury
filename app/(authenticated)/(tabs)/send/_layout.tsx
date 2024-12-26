@@ -59,6 +59,7 @@ export default function SendLayout() {
 			<Stack.Screen
 				name="amount"
 				options={{
+					headerShown: false,
 					presentation: "modal",
 				}}
 			/>
