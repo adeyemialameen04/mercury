@@ -29,7 +29,6 @@ const homeActions = [
 ];
 
 export default function HomeActions({
-	balance,
 	from,
 	tokenData,
 	mergedTokens,

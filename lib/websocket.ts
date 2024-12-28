@@ -1,3 +1,4 @@
+// Frontend: lib/websocket.ts
 export class TransactionWebSocket {
 	private ws: WebSocket | null = null;
 
@@ -41,9 +42,13 @@ export class TransactionWebSocket {
 		}
 
 		const message = {
-			txId,
-			expoPushToken,
-			stxAddr,
+			type: "track-transaction", // Add message type
+			data: {
+				// Wrap data in a data field
+				txId,
+				expoPushToken,
+				stxAddr,
+			},
 		};
 
 		this.ws.send(JSON.stringify(message));

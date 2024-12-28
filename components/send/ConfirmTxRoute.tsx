@@ -7,15 +7,11 @@ import { Button } from "../ui/button";
 import ActionButton from "../ActionButton";
 import { useRouter } from "expo-router";
 import { TokenData } from "~/types/token";
-import { send } from "~/lib/services/send";
 import { useState } from "react";
-import { useWalletStore } from "~/store/walletStore";
 import { WalletData } from "~/types/wallet";
-
-const truncateAddress = (address: string) => {
-	if (!address) return "";
-	return `${address.slice(0, 6)}...${address.slice(-4)}`;
-};
+import { useWalletStore } from "~/store/walletStore";
+import { send } from "~/lib/services/send";
+import { truncateAddress } from "~/utils/truncateAddress";
 
 export default function ConfirmTxRoute({
 	router: sheetRouter,
@@ -23,7 +19,6 @@ export default function ConfirmTxRoute({
 	payload,
 }: RouteScreenProps<"confirm-tx-sheet", "confirm-tx-route">) {
 	const { walletData } = useWalletStore();
-	console.log(params, payload);
 	const tokenData: TokenData = payload.tokenData;
 	const [isSending, setIsSending] = useState(false);
 	const buyParams = payload?.buyParams;
@@ -77,14 +72,18 @@ export default function ConfirmTxRoute({
 						onPress={async () => {
 							try {
 								setIsSending(true);
+
+								const txRes = await send(
+									buyParams,
+									tokenData,
+									walletData as WalletData,
+								);
+
 								sheetRouter.navigate("tx-success-route", {
-									txID: "0x051ab6dea2f225b175d5aa6bb4aa62a225b75b7b58de8be06c2f14cf23776b17",
+									// txID: "0x4d23313835e03f305e50091d46b2d9cbb9ba5ab51547e570805b0bf9adbf7d8b",
+									txID: txRes.txid,
+									walletData: walletData,
 								});
-								// const txRes = await send(
-								// 	buyParams,
-								// 	tokenData,
-								// 	walletData as WalletData,
-								// );
 								console.log("Transaction result:", txRes);
 							} catch (error) {
 								console.error("Transaction failed:", error);

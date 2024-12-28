@@ -8,6 +8,7 @@ import ImportWalletSheet from "~/components/wallet/ImportWalletSheet";
 import { WalletSheetWithRouter } from "~/components/wallet/WalletSheetWithRouter";
 import { AccountBalance } from "~/types/balance";
 import { TokenData } from "~/types/token";
+import { WalletData } from "~/types/wallet";
 
 registerSheet("wallet-sheet-with-router", WalletSheetWithRouter);
 registerSheet("import-wallet-sheet", ImportWalletSheet);
@@ -46,6 +47,7 @@ declare module "react-native-actions-sheet" {
 				}>;
 				"tx-success-route": RouteDefinition<{
 					txID: string;
+					walletData: WalletData;
 				}>;
 			};
 		}>;

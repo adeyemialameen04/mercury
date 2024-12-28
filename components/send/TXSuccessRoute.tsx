@@ -8,8 +8,9 @@ import { useRouter } from "expo-router";
 import ActionButton from "../ActionButton";
 import { useState } from "react";
 import CopyButton from "../ui/Copy";
-import * as WebBrowser from "expo-web-browser";
-import { HIRO_API_BASE_URL, HIRO_MAINNET_API_URL } from "~/lib/constants";
+import { WalletData } from "~/types/wallet";
+import { useWebSocket } from "~/context/WebsocketContext";
+import { _handleOpenTxInExplorer } from "~/utils/openTxInExplorer";
 
 const truncateTxID = (txID: string) => {
 	if (!txID) return "";
@@ -19,16 +20,11 @@ const truncateTxID = (txID: string) => {
 export default function TxSuccessRoute({
 	params,
 }: RouteScreenProps<"confirm-tx-sheet", "confirm-tx-route">) {
+	const wsClient = useWebSocket();
 	const [isTracking, setIsTracking] = useState(false);
 	const router = useRouter();
 	const txID = params.txID as string;
-
-	const _handlePressButtonAsync = async () => {
-		let result = await WebBrowser.openBrowserAsync(
-			`${HIRO_API_BASE_URL}txid/${txID}?chain=mainnet&api=${HIRO_MAINNET_API_URL}`,
-		);
-		console.log(result);
-	};
+	const walletData = params.walletData as WalletData;
 
 	return (
 		<View className="p-6 flex-col gap-4">
@@ -45,7 +41,7 @@ export default function TxSuccessRoute({
 			<Button
 				variant={"ghost"}
 				className="flex-row gap-1 "
-				onPress={_handlePressButtonAsync}
+				onPress={async () => await _handleOpenTxInExplorer(txID)}
 			>
 				<Muted>See on </Muted>
 				<Text className="text-white">Stacks Explorer</Text>
@@ -77,11 +73,14 @@ export default function TxSuccessRoute({
 						try {
 							setIsTracking(true);
 
-							// const txRes = await send(
-							// 	buyParams,
-							// 	tokenData,
-							// 	walletData as WalletData,
-							// );
+							if (txID) {
+								console.log("hello");
+								wsClient.trackTransaction(
+									txID,
+									"nbfhufhrurhohiotheroithiothow",
+									walletData?.address,
+								);
+							}
 						} catch (error) {
 							// Add appropriate error handling here
 							// You might want to show an error message to the user
