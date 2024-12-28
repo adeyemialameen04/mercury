@@ -1,23 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import { ScrollView, View } from "react-native";
 import { H3, H4, Muted } from "~/components/ui/typography";
 import { useQuery } from "react-query";
-import { Text } from "~/components/ui/text";
-import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import ActionButton from "~/components/ActionButton";
 import { useWalletStore } from "~/store/walletStore";
-import RecentTransactions from "~/components/home/RecentTransactions";
 import HomeActions from "~/components/home/HomeActions";
 import { getAccountBalance } from "~/queries/balance";
 import CopyButton from "~/components/ui/Copy";
+import TokenList from "~/components/home/TokenList";
+import { getTokens } from "~/queries/token";
 
 export default function Page() {
 	const { walletData, isLoading: isWalletDataLoading } = useWalletStore();
-	const [value, setValue] = useState("transfer");
 
+	// First query - get balance
 	const {
 		data: balanceData,
-		isLoading,
+		isLoading: isBalanceLoading,
 		error,
 		refetch,
 		isRefetching,
@@ -28,6 +27,36 @@ export default function Page() {
 			enabled: !!walletData?.address,
 		},
 	);
+
+	const tokenIDS = React.useMemo(() => {
+		if (!balanceData?.fungible_tokens) return [];
+		return Object.keys(balanceData.fungible_tokens).map(
+			(key) => key.split("::")[0],
+		);
+	}, [balanceData]);
+
+	const { isLoading: isTokenLoading, data: tokensData } = useQuery(
+		[`tokens-${walletData?.address}`, tokenIDS],
+		() => getTokens(tokenIDS),
+		{
+			enabled: !!walletData?.address && tokenIDS.length > 0,
+		},
+	);
+
+	const mergedTokens = React.useMemo(() => {
+		if (!tokensData || !balanceData?.fungible_tokens) return [];
+
+		return tokensData.map((token) => {
+			const matchingKey = Object.keys(balanceData.fungible_tokens).find((key) =>
+				key.startsWith(token.contract),
+			);
+			if (matchingKey) {
+				const tokenBalance = balanceData.fungible_tokens[matchingKey].balance;
+				return { ...token, balance: tokenBalance };
+			}
+			return token;
+		});
+	}, [tokensData, balanceData]);
 
 	return (
 		<ScrollView className="p-6 flex-1">
@@ -41,11 +70,11 @@ export default function Page() {
 						<CopyButton copyText={walletData?.address as string} />
 					</View>
 				</View>
-				<View className="flex justify-between  flex-row">
+				<View className="flex justify-between flex-row">
 					<View className="flex flex-col gap-1 flex-1">
 						<Muted>Total Balance</Muted>
 						<H3>
-							{isLoading
+							{isBalanceLoading
 								? "Loading..."
 								: error
 									? "Error loading balance"
@@ -62,23 +91,15 @@ export default function Page() {
 					</View>
 				</View>
 			</View>
-			<HomeActions balance={balanceData} />
-			<RecentTransactions />
-			<Tabs
-				value={value}
-				onValueChange={setValue}
-				className="w-full max-w-[400px] mx-auto flex-col gap-1.5 mt-4"
-			>
-				<TabsList className="flex-row w-full">
-					<TabsTrigger value="transfer" className="flex-1">
-						<Text>Transfer</Text>
-					</TabsTrigger>
-					<TabsTrigger value="swap" className="flex-1">
-						<Text>Password</Text>
-					</TabsTrigger>
-				</TabsList>
-				{/* <TransferStxForm walletData={walletData as WalletData} /> */}
-			</Tabs>
+			<HomeActions
+				balance={balanceData}
+				mergedTokens={mergedTokens}
+				isLoading={isBalanceLoading || isTokenLoading || isRefetching}
+			/>
+			<TokenList
+				mergedTokens={mergedTokens}
+				isLoading={isBalanceLoading || isTokenLoading || isRefetching}
+			/>
 		</ScrollView>
 	);
 }

@@ -14,12 +14,10 @@ const routes: Route[] = [
 ];
 
 export default function ConfirmTxSheet(props: SheetProps) {
-	console.log(props.payload);
-
 	return (
 		<ActionSheet
 			routes={routes}
-			enableRouterBackNavigation={true}
+			enableRouterBackNavigation={false}
 			initialRoute={"confirm-tx-route"}
 			closable={false}
 			containerStyle={{

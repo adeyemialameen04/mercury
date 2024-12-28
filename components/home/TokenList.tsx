@@ -1,9 +1,5 @@
-import axios from "axios";
 import { Image } from "expo-image";
 import { View, Text } from "react-native";
-import ActionSheet, { SheetProps } from "react-native-actions-sheet";
-import { XVERSE_API_BASE_URL } from "~/lib/constants";
-import { useWalletStore } from "~/store/walletStore";
 import { Muted, Small } from "../ui/typography";
 import React from "react";
 import { TokenItemSkeleton } from "../loading/TokenItemSkeleton";
@@ -14,43 +10,29 @@ import { SheetManager } from "react-native-actions-sheet";
 const blurhash =
 	"|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
-const getTokens = async (coins: string[]) => {
-	try {
-		const { data } = await axios.post(`${XVERSE_API_BASE_URL}sip10/tokens`, {
-			currency: "USD",
-			coins: JSON.stringify(coins),
-		});
-		return data;
-	} catch (err) {
-		console.error(err);
-	}
-};
-
-export default function SelectToken(props: SheetProps<"select-token">) {
-	const mergedTokens = props.payload?.mergedTokens;
-	const isLoading = props.payload?.isLoading;
-
+export default function TokenList({
+	isLoading,
+	mergedTokens,
+}: {
+	isLoading: boolean;
+	mergedTokens: any;
+}) {
 	return (
-		<ActionSheet
-			id={props.sheetId}
-			containerStyle={{
-				backgroundColor: "#27282A",
-			}}
-		>
-			<View className="flex flex-col gap-0">
-				{isLoading ? (
-					<View className="flex flex-col p-6 gap-4">
-						<TokenItemSkeleton />
-						<TokenItemSkeleton />
-						<TokenItemSkeleton />
-					</View>
-				) : (
-					mergedTokens?.map((token, index) => (
-						<TokenItem key={`${token.id}-${index}`} item={token} />
-					))
-				)}
-			</View>
-		</ActionSheet>
+		<View className="flex flex-col gap-6 mt-4">
+			{isLoading ? (
+				<View className="flex flex-col gap-4">
+					<TokenItemSkeleton />
+					<TokenItemSkeleton />
+					<TokenItemSkeleton />
+					<TokenItemSkeleton />
+					<TokenItemSkeleton />
+				</View>
+			) : (
+				mergedTokens?.map((token, index) => (
+					<TokenItem key={`${token.id}-${index}`} item={token} />
+				))
+			)}
+		</View>
 	);
 }
 
@@ -60,10 +42,10 @@ export const TokenItem = ({ item }: { item: any }) => {
 		Math.pow(10, item.decimals ? item.decimals : 6);
 
 	return (
-		<TouchableOpacity className="p-6">
+		<TouchableOpacity className="">
 			<Link
 				href={{
-					pathname: "/send/[contract]",
+					pathname: "/send/details",
 					params: {
 						contract: item.contract,
 						tokenData: JSON.stringify({
@@ -87,23 +69,19 @@ export const TokenItem = ({ item }: { item: any }) => {
 							/>
 						</View>
 						<View className="flex flex-col justify-center gap-1">
-							<Text className="uppercase font-semibold text-white">
-								{item.ticker}
-							</Text>
+							<Text className="uppercase font-semibold">{item.ticker}</Text>
 							<Muted className="">{item.name}</Muted>
 						</View>
 					</View>
 					<View className="flex flex-col items-end gap-3">
-						<Text className="font-medium text-white">
-							{balAmt.toLocaleString()}
-						</Text>
+						<Text className="font-medium">{balAmt.toLocaleString()}</Text>
 						<View className="flex flex-row items-center gap-1">
 							{item.currentPrice ? (
-								<Small className="text-white">
+								<Small className="">
 									{(balAmt * item.currentPrice).toFixed(4)} USD
 								</Small>
 							) : (
-								<Small className="text-white">N/A</Small>
+								<Small className="">N/A</Small>
 							)}
 						</View>
 					</View>

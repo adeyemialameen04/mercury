@@ -1,6 +1,6 @@
 import { RouteDefinition } from "react-native-actions-sheet";
 import { registerSheet, SheetDefinition } from "react-native-actions-sheet";
-import NetworkFeeSheet from "~/app/(authenticated)/(tabs)/send/NewtworkFeeSheet";
+// import NetworkFeeSheet from "~/app/(authenticated)/(tabs)/send/NewtworkFeeSheet";
 import AmountSheet from "~/components/send/AmountSheet";
 import ConfirmTxSheet from "~/components/send/ConfirmTxSheet";
 import SelectToken from "~/components/send/SelectToken";
@@ -8,12 +8,13 @@ import ImportWalletSheet from "~/components/wallet/ImportWalletSheet";
 import { WalletSheetWithRouter } from "~/components/wallet/WalletSheetWithRouter";
 import { AccountBalance } from "~/types/balance";
 import { TokenData } from "~/types/token";
+import { WalletData } from "~/types/wallet";
 
 registerSheet("wallet-sheet-with-router", WalletSheetWithRouter);
 registerSheet("import-wallet-sheet", ImportWalletSheet);
 registerSheet("select-token", SelectToken);
 registerSheet("amount-sheet", AmountSheet);
-registerSheet("network-fee", NetworkFeeSheet);
+// registerSheet("network-fee", NetworkFeeSheet);
 registerSheet("confirm-tx-sheet", ConfirmTxSheet);
 
 declare module "react-native-actions-sheet" {
@@ -31,7 +32,8 @@ declare module "react-native-actions-sheet" {
 		"import-wallet-sheet": SheetDefinition;
 		"select-token": SheetDefinition<{
 			payload: {
-				balance: AccountBalance;
+				mergedTokens: any;
+				isLoading: boolean;
 			};
 		}>;
 		"network-fee": SheetDefinition;
@@ -45,6 +47,7 @@ declare module "react-native-actions-sheet" {
 				}>;
 				"tx-success-route": RouteDefinition<{
 					txID: string;
+					walletData: WalletData;
 				}>;
 			};
 		}>;
