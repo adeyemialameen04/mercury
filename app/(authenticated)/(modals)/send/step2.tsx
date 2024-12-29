@@ -1,3 +1,4 @@
+// step2.tsx
 import React from "react";
 import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
@@ -15,9 +16,8 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "~/components/ui/label";
 import { Button } from "~/components/ui/button";
-import { useRouter } from "expo-router";
 import { Muted, Small } from "~/components/ui/typography";
-import { SheetManager, useSheetRouter } from "react-native-actions-sheet";
+import { SheetManager } from "react-native-actions-sheet";
 import { TokenData } from "~/types/token";
 
 const createSchema = (balance: string) =>
@@ -35,14 +35,11 @@ const createSchema = (balance: string) =>
 type FormData = z.infer<ReturnType<typeof createSchema>>;
 
 export default function Page() {
-	const sheetRouter = useSheetRouter("confirm-tx-sheet");
 	const { tokenData: tokenDataStr, buyParams: buyParamsStr } =
 		useLocalSearchParams();
 	const buyParams = JSON.parse(buyParamsStr as string);
 	const tokenData: TokenData = JSON.parse(tokenDataStr as string);
 	const tokenBalance = tokenData.formattedBalAmt.toString() as string;
-
-	const router = useRouter();
 
 	const {
 		control,
@@ -59,6 +56,7 @@ export default function Page() {
 
 	const onSubmit = async (values: FormData) => {
 		SheetManager.show("confirm-tx-sheet", {
+			context: "modal",
 			payload: {
 				tokenData,
 				buyParams: {

@@ -9,7 +9,7 @@ import { AccountBalance } from "~/types/balance";
 import { useRouter } from "expo-router";
 import { TokenData } from "~/types/token";
 
-const homeActions = [
+const detailsActions = [
 	{
 		title: "Send",
 		route: "send",
@@ -28,44 +28,28 @@ const homeActions = [
 	},
 ];
 
-export default function HomeActions({
-	from,
+export default function DetailsActions({
 	tokenData,
-	mergedTokens,
-	isLoading,
 }: {
-	balance?: AccountBalance;
-	from: string;
 	tokenData: TokenData;
-	mergedTokens?: any;
-	isLoading: boolean;
 }) {
 	const router = useRouter();
 	return (
 		<View className="flex flex-row gap-4 items-center justify-center my-4">
-			{homeActions.map((item) => (
+			{detailsActions.map((item) => (
 				<Pressable
 					className="flex flex-col flex-1 rounded-md max-h-none bg-muted items-center justify-center gap-3 py-3"
 					key={item.route}
 					onPress={async () => {
 						if (item.route === "send") {
-							console.log(1);
-							if (from === "list" && tokenData) {
-								console.log(2);
-								router.push({
-									pathname: "/send/step1",
-									params: {
-										tokenData: JSON.stringify({
-											...tokenData,
-										}),
-									},
-								});
-							} else {
-								await SheetManager.show("select-token", {
-									payload: { mergedTokens, isLoading },
-									context: "global",
-								});
-							}
+							router.push({
+								pathname: "/(authenticated)/(modals)/send/step1",
+								params: {
+									tokenData: JSON.stringify({
+										...tokenData,
+									}),
+								},
+							});
 						}
 					}}
 				>

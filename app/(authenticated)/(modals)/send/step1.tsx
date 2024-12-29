@@ -1,7 +1,7 @@
 import React from "react";
 import { validateStacksAddress } from "@stacks/transactions";
 import { Image } from "expo-image";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { ScrollView, View } from "react-native";
 import {
 	Card,
@@ -17,7 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "~/components/ui/label";
 import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
-import { useRouter } from "expo-router";
+import { useState } from "react";
 
 const schema = z.object({
 	receiverAddr: z
@@ -31,10 +31,20 @@ const schema = z.object({
 
 export type FormData = z.infer<typeof schema>;
 
-export default function Send() {
+export default function Page() {
 	const { tokenData } = useLocalSearchParams();
-	const data = JSON.parse(tokenData);
 	const router = useRouter();
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+
+	// Safely parse tokenData
+	let data;
+	try {
+		data = typeof tokenData === "string" ? JSON.parse(tokenData) : null;
+	} catch (e) {
+		console.error("Failed to parse tokenData:", e);
+		data = null;
+	}
 
 	const {
 		control,
@@ -49,21 +59,51 @@ export default function Send() {
 	});
 
 	const onSubmit = async (values: FormData) => {
-		router.push({
-			pathname: "/send/amount",
-			params: {
-				tokenData,
+		if (isSubmitting) return;
+
+		try {
+			setIsSubmitting(true);
+			setError(null);
+
+			// Validate that we have the required data
+			if (!data) {
+				throw new Error("Token data is missing or invalid");
+			}
+
+			// Prepare navigation params
+			const navigationParams = {
+				tokenData: tokenData, // Keep original tokenData
 				buyParams: JSON.stringify(values),
-			},
-		});
-		// SheetManager.show("amount-sheet", {
-		// 	payload: {
-		// 		buyParams: values,
-		// 		token: data as FtMetadataResponse,
-		// 		balance: data.balance as string,
-		// 	},
-		// });
+			};
+
+			// Navigate with error handling
+			await router.push({
+				pathname: "/send/step2",
+				params: navigationParams,
+			});
+		} catch (err) {
+			console.error("Navigation error:", err);
+			setError(
+				err instanceof Error ? err.message : "Failed to proceed to next step",
+			);
+		} finally {
+			setIsSubmitting(false);
+		}
 	};
+
+	if (!data) {
+		return (
+			<ScrollView className="flex-1 p-6 py-10">
+				<Card>
+					<CardContent>
+						<Text className="text-red-500">
+							Invalid token data. Please try again.
+						</Text>
+					</CardContent>
+				</Card>
+			</ScrollView>
+		);
+	}
 
 	return (
 		<ScrollView className="flex-1 p-6 py-10">
@@ -91,6 +131,7 @@ export default function Send() {
 									value={value}
 									placeholder="SP3RTF...XPTPMZ9"
 									className="w-full"
+									editable={!isSubmitting}
 								/>
 							)}
 						/>
@@ -113,14 +154,22 @@ export default function Send() {
 									value={value}
 									placeholder=""
 									className="w-full"
+									editable={!isSubmitting}
 								/>
 							)}
 						/>
 					</View>
+					{error && <Text className="text-red-500 text-sm">{error}</Text>}
 				</CardContent>
 				<CardFooter>
-					<Button className="w-full" onPress={handleSubmit(onSubmit)}>
-						<Text className="text-center">Next</Text>
+					<Button
+						className="w-full"
+						onPress={handleSubmit(onSubmit)}
+						disabled={isSubmitting}
+					>
+						<Text className="text-center">
+							{isSubmitting ? "Processing..." : "Next"}
+						</Text>
 					</Button>
 				</CardFooter>
 			</Card>

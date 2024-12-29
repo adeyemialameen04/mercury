@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import { RouteScreenProps } from "react-native-actions-sheet";
+import { RouteScreenProps, SheetManager } from "react-native-actions-sheet";
 import { Text } from "../ui/text";
 import { Image } from "expo-image";
 import { Large, Muted } from "../ui/typography";
@@ -57,8 +57,8 @@ export default function ConfirmTxRoute({
 					<Button
 						variant={"default"}
 						className="flex-1"
-						onPress={() => {
-							// SheetManager.hide(props.sheetId);
+						onPress={async () => {
+							await SheetManager.hide("confirm-tx-sheet");
 							router.push("/(authenticated)/(tabs)/home");
 						}}
 					>

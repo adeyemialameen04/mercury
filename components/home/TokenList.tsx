@@ -45,7 +45,7 @@ export const TokenItem = ({ item }: { item: any }) => {
 		<TouchableOpacity className="">
 			<Link
 				href={{
-					pathname: "/send/details",
+					pathname: "/(authenticated)/(tabs)/[contract]",
 					params: {
 						contract: item.contract,
 						tokenData: JSON.stringify({
@@ -69,12 +69,16 @@ export const TokenItem = ({ item }: { item: any }) => {
 							/>
 						</View>
 						<View className="flex flex-col justify-center gap-1">
-							<Text className="uppercase font-semibold">{item.ticker}</Text>
+							<Text className="uppercase font-semibold text-primary">
+								{item.ticker}
+							</Text>
 							<Muted className="">{item.name}</Muted>
 						</View>
 					</View>
 					<View className="flex flex-col items-end gap-3">
-						<Text className="font-medium">{balAmt.toLocaleString()}</Text>
+						<Text className="font-medium text-primary">
+							{balAmt.toLocaleString()}
+						</Text>
 						<View className="flex flex-row items-center gap-1">
 							{item.currentPrice ? (
 								<Small className="">
