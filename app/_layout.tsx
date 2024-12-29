@@ -9,7 +9,7 @@ import {
 import { SplashScreen, Stack, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
-import { Platform } from "react-native";
+import { Platform, TouchableOpacity } from "react-native";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { PortalHost } from "@rn-primitives/portal";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
@@ -19,7 +19,8 @@ import { useRouter } from "expo-router";
 import { useWalletStore } from "~/store/walletStore";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { NAV_THEME } from "~/lib/colors";
-import { WebSocketProvider } from "~/context/WebsocketContext";
+import HomeHeader from "~/components/HomeHeader";
+import { Back } from "~/lib/icons/Back";
 const LIGHT_THEME: Theme = {
 	...DefaultTheme,
 	colors: NAV_THEME.light,
@@ -87,27 +88,31 @@ function AppContent() {
 	return (
 		<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
 			<QueryClientProvider client={queryClient}>
-				<WebSocketProvider>
-					<SheetProvider>
-						<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-						<Stack>
-							<Stack.Screen
-								name="index"
-								options={{
-									title: "Mercury",
-									headerShown: false,
-								}}
-							/>
-							{/* Add screens for authenticated routes */}
-							<Stack.Screen
-								name="(authenticated)/(tabs)"
-								options={{
-									headerShown: false,
-								}}
-							/>
-						</Stack>
-					</SheetProvider>
-				</WebSocketProvider>
+				{/* <WebSocketProvider> */}
+				<SheetProvider context="global">
+					<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+					<Stack>
+						<Stack.Screen
+							name="index"
+							options={{
+								title: "Mercury",
+								headerShown: false,
+							}}
+						/>
+						<Stack.Screen
+							name="(authenticated)/(tabs)"
+							options={{
+								header: () => <HomeHeader />,
+							}}
+						/>
+
+						<Stack.Screen
+							name="(authenticated)/(modals)"
+							options={{ headerShown: false }}
+						/>
+					</Stack>
+				</SheetProvider>
+				{/* </WebSocketProvider> */}
 			</QueryClientProvider>
 			<PortalHost />
 		</ThemeProvider>

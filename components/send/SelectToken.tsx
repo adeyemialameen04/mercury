@@ -63,9 +63,8 @@ export const TokenItem = ({ item }: { item: any }) => {
 		<TouchableOpacity className="p-6">
 			<Link
 				href={{
-					pathname: "/send/[contract]",
+					pathname: "/(authenticated)/(modals)/send/step1",
 					params: {
-						contract: item.contract,
 						tokenData: JSON.stringify({
 							...item,
 							formattedBalAmt: balAmt,

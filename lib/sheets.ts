@@ -6,7 +6,6 @@ import ConfirmTxSheet from "~/components/send/ConfirmTxSheet";
 import SelectToken from "~/components/send/SelectToken";
 import ImportWalletSheet from "~/components/wallet/ImportWalletSheet";
 import { WalletSheetWithRouter } from "~/components/wallet/WalletSheetWithRouter";
-import { AccountBalance } from "~/types/balance";
 import { TokenData } from "~/types/token";
 import { WalletData } from "~/types/wallet";
 
@@ -15,7 +14,7 @@ registerSheet("import-wallet-sheet", ImportWalletSheet);
 registerSheet("select-token", SelectToken);
 registerSheet("amount-sheet", AmountSheet);
 // registerSheet("network-fee", NetworkFeeSheet);
-registerSheet("confirm-tx-sheet", ConfirmTxSheet);
+registerSheet("confirm-tx-sheet", ConfirmTxSheet, "modal");
 
 declare module "react-native-actions-sheet" {
 	interface Sheets {
