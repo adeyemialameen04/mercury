@@ -25,7 +25,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.atomic_btc.mercury"
+      "package": "com.atomic_btc.mercury",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
