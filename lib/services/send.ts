@@ -63,7 +63,7 @@ export const send = async (
 		validateWithAbi: true,
 		network: "mainnet" as const,
 	};
-	console.log(tokenData.ticker);
+	console.log(txOptions);
 
 	return new Promise((resolve, reject) => {
 		setTimeout(async () => {

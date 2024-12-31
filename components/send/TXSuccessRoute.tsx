@@ -9,8 +9,9 @@ import ActionButton from "../ActionButton";
 import { useState } from "react";
 import CopyButton from "../ui/Copy";
 import { WalletData } from "~/types/wallet";
-import { useWebSocket } from "~/context/WebsocketContext";
 import { _handleOpenTxInExplorer } from "~/utils/openTxInExplorer";
+import axios from "axios";
+import { NOTIFICATION_SERVICE_URL } from "~/lib/constants";
 
 const truncateTxID = (txID: string) => {
 	if (!txID) return "";
@@ -20,7 +21,6 @@ const truncateTxID = (txID: string) => {
 export default function TxSuccessRoute({
 	params,
 }: RouteScreenProps<"confirm-tx-sheet", "confirm-tx-route">) {
-	const wsClient = useWebSocket();
 	const [isTracking, setIsTracking] = useState(false);
 	const router = useRouter();
 	const txID = params.txID as string;
@@ -75,11 +75,15 @@ export default function TxSuccessRoute({
 
 							if (txID) {
 								console.log("hello");
-								wsClient.trackTransaction(
-									txID,
-									"nbfhufhrurhohiotheroithiothow",
-									walletData?.address,
+								const { data } = await axios.post(
+									`${NOTIFICATION_SERVICE_URL}track`,
+									{
+										txID,
+										address: walletData.address,
+									},
 								);
+
+								console.log(data);
 							}
 						} catch (error) {
 							// Add appropriate error handling here

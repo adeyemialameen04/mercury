@@ -29,14 +29,9 @@ const homeActions = [
 ];
 
 export default function HomeActions({
-	from,
-	tokenData,
 	mergedTokens,
 	isLoading,
 }: {
-	balance?: AccountBalance;
-	from: string;
-	tokenData: TokenData;
 	mergedTokens?: any;
 	isLoading: boolean;
 }) {
@@ -49,23 +44,12 @@ export default function HomeActions({
 					key={item.route}
 					onPress={async () => {
 						if (item.route === "send") {
-							console.log(1);
-							if (from === "list" && tokenData) {
-								console.log(2);
-								router.push({
-									pathname: "/send/step1",
-									params: {
-										tokenData: JSON.stringify({
-											...tokenData,
-										}),
-									},
-								});
-							} else {
-								await SheetManager.show("select-token", {
-									payload: { mergedTokens, isLoading },
-									context: "global",
-								});
-							}
+							await SheetManager.show("select-token", {
+								payload: { mergedTokens, isLoading },
+								context: "global",
+							});
+						} else if (item.route === "swap") {
+							router.push({ pathname: "/(authenticated)/(modals)/swap" });
 						}
 					}}
 				>

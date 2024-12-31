@@ -5,7 +5,7 @@ import { Image } from "expo-image";
 import { Large, Muted } from "../ui/typography";
 import { Button } from "../ui/button";
 import ActionButton from "../ActionButton";
-import { useRouter } from "expo-router";
+import { useRouter, Link } from "expo-router";
 import { TokenData } from "~/types/token";
 import { useState } from "react";
 import { WalletData } from "~/types/wallet";
@@ -54,16 +54,24 @@ export default function ConfirmTxRoute({
 					</View>
 				</View>
 				<View className="flex gap-2 flex-row">
-					<Button
-						variant={"default"}
-						className="flex-1"
-						onPress={async () => {
-							await SheetManager.hide("confirm-tx-sheet");
-							router.push("/(authenticated)/(tabs)/home");
+					<Link
+						onPress={() => {
+							SheetManager.hide("confirm-tx-sheet");
 						}}
+						href={"/(authenticated)/(tabs)/home"}
+						asChild
 					>
-						<Text>Cancel</Text>
-					</Button>
+						<Button
+							variant={"default"}
+							className="flex-1"
+							// onPress={async () => {
+							// 	SheetManager.hide("confirm-tx-sheet");
+							// 	router.push("/(authenticated)/(tabs)/home");
+							// }}
+						>
+							<Text>Cancel</Text>
+						</Button>
+					</Link>
 					<ActionButton
 						loading={isSending}
 						text="Confirm"
@@ -80,7 +88,6 @@ export default function ConfirmTxRoute({
 								);
 
 								sheetRouter.navigate("tx-success-route", {
-									// txID: "0x4d23313835e03f305e50091d46b2d9cbb9ba5ab51547e570805b0bf9adbf7d8b",
 									txID: txRes.txid,
 									walletData: walletData,
 								});

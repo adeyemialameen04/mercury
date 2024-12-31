@@ -92,7 +92,6 @@ export default function Page() {
 				</View>
 			</View>
 			<HomeActions
-				balance={balanceData}
 				mergedTokens={mergedTokens}
 				isLoading={isBalanceLoading || isTokenLoading || isRefetching}
 			/>

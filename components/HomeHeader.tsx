@@ -8,20 +8,21 @@ import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { Text } from "./ui/text";
 const GITHUB_AVATAR_URI = "https://github.com/mrzachnugent.png";
 export default function HomeHeader() {
-	const { top } = useSafeAreaInsets();
+	const { top, bottom } = useSafeAreaInsets();
 	return (
-		<BlurView intensity={80} tint={"extraLight"} style={{ paddingTop: top }}>
-			<View className="px-5 flex-row bg-transparent h-14 gap-4 items-center justify-center flex">
+		<BlurView
+			intensity={80}
+			tint={"extraLight"}
+			style={{ paddingTop: top, paddingBottom: bottom }}
+		>
+			<View className="px-5 flex-row bg-transparent h-14 gap-4 items-center justify-between flex">
 				<Avatar alt="Zach Nugent's Avatar">
 					<AvatarImage source={{ uri: GITHUB_AVATAR_URI }} />
 					<AvatarFallback>
 						<Text>ZN</Text>
 					</AvatarFallback>
 				</Avatar>
-				<Input
-					className="rounded-full flex-1 placeholder:text-sm pl-6"
-					placeholder="Search"
-				/>
+				<Input className="rounded-full flex-1 pl-6" placeholder="Search" />
 				<ThemeToggle />
 			</View>
 		</BlurView>
