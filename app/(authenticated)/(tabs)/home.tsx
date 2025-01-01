@@ -11,6 +11,8 @@ import TokenList from "~/components/home/TokenList";
 import { getTokens } from "~/queries/token";
 import { useNotification } from "~/context/NotificationContext";
 import { AccountBalance } from "~/types/balance";
+import MempoolTransactions from "~/components/home/MemPoolTransactions";
+import { WalletData } from "~/types/wallet";
 
 export default function Page() {
 	const { expoPushToken } = useNotification();
@@ -62,7 +64,12 @@ export default function Page() {
 	}, [tokensData, balanceData]);
 
 	return (
-		<ScrollView className="p-6 flex-1">
+		<ScrollView
+			className="p-6 flex-1"
+			bounces={false}
+			overScrollMode="never"
+			showsVerticalScrollIndicator={false}
+		>
 			<View className="flex flex-col justify-between gap-4">
 				<View className="flex flex-col gap-1">
 					<H4>Wallet</H4>
@@ -81,7 +88,8 @@ export default function Page() {
 								? "Loading..."
 								: error
 									? "Error loading balance"
-									: `${balanceData?.stx?.balance / 1000000} STX` || "0 STX"}
+									: `${Number(balanceData?.stx?.balance) / 1000000} STX` ||
+										"0 STX"}
 						</H3>
 					</View>
 					<View className="flex-1">
@@ -101,8 +109,9 @@ export default function Page() {
 				mergedTokens={mergedTokens}
 				isLoading={isBalanceLoading || isTokenLoading || isRefetching}
 				bns={balanceData?.bns}
-				stxAddr={walletData?.address}
+				stxAddr={walletData?.address as string}
 			/>
+			{/* <MempoolTransactions walletData={walletData as WalletData} /> */}
 			<TokenList
 				mergedTokens={mergedTokens}
 				isLoading={isBalanceLoading || isTokenLoading || isRefetching}

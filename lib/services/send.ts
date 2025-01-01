@@ -11,7 +11,8 @@ import {
 	someCV, // Add this import
 	noneCV,
 	SignedContractCallOptions,
-	Pc, // Add this import
+	Pc,
+	TxBroadcastResult, // Add this import
 } from "@stacks/transactions";
 
 export const send = async (
@@ -23,7 +24,7 @@ export const send = async (
 	},
 	tokenData: TokenData,
 	walletData: WalletData,
-) => {
+): Promise<TxBroadcastResult> => {
 	let memoCV;
 	if (params.memmo) {
 		let memoBuffer = Buffer.from(params.memmo);

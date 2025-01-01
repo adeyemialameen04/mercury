@@ -12,12 +12,14 @@ import { WalletData } from "~/types/wallet";
 import { useWalletStore } from "~/store/walletStore";
 import { send } from "~/lib/services/send";
 import { truncateAddress } from "~/utils/truncateAddress";
+import { useQueryClient } from "react-query";
 
 export default function ConfirmTxRoute({
 	router: sheetRouter,
 	params,
 	payload,
 }: RouteScreenProps<"confirm-tx-sheet", "confirm-tx-route">) {
+	const queryClient = useQueryClient();
 	const { walletData } = useWalletStore();
 	const tokenData: TokenData = payload.tokenData;
 	const [isSending, setIsSending] = useState(false);
@@ -80,18 +82,26 @@ export default function ConfirmTxRoute({
 						onPress={async () => {
 							try {
 								setIsSending(true);
+								if (walletData?.address) {
+									const txRes = await send(
+										buyParams,
+										tokenData,
+										walletData as WalletData,
+									);
 
-								const txRes = await send(
-									buyParams,
-									tokenData,
-									walletData as WalletData,
-								);
+									queryClient.invalidateQueries([
+										`balance-${walletData.address}`,
+									]);
+									queryClient.invalidateQueries([
+										`tokens-${walletData.address}`,
+									]);
 
-								sheetRouter.navigate("tx-success-route", {
-									txID: txRes.txid,
-									walletData: walletData,
-								});
-								console.log("Transaction result:", txRes);
+									sheetRouter.navigate("tx-success-route", {
+										txID: txRes.txid,
+										walletData: walletData,
+									});
+									console.log("Transaction result:", txRes);
+								}
 							} catch (error) {
 								console.error("Transaction failed:", error);
 								// Add appropriate error handling here

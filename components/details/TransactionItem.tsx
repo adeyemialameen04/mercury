@@ -1,10 +1,10 @@
 import React from "react";
 import { View, TouchableOpacity } from "react-native";
 import {
-	Collapse,
-	CollapseHeader,
-	CollapseBody,
-} from "accordion-collapse-react-native";
+	Collapsible,
+	CollapsibleTrigger,
+	CollapsibleContent,
+} from "~/components/ui/collapsible";
 import { _handleOpenTxInExplorer } from "~/utils/openTxInExplorer";
 import { truncateAddress } from "~/utils/truncateAddress";
 import { Muted } from "../ui/typography";
@@ -15,6 +15,7 @@ import { ChevronRight } from "~/lib/icons/ChevronRight";
 import { ExternalLink } from "~/lib/icons/ExternalLink";
 import { Text } from "../ui/text";
 import { formatTransaction } from "~/utils/formatTransaction";
+import { getPrimaryBnsName } from "~/queries/bns";
 
 interface TransactionItemProps {
 	transaction: ReturnType<typeof formatTransaction>;
@@ -23,9 +24,9 @@ interface TransactionItemProps {
 export const TransactionItem = ({ transaction }: TransactionItemProps) => {
 	return (
 		<View className="mb-4 rounded-xl border border-border bg-card overflow-hidden shadow-sm">
-			<Collapse>
-				<CollapseHeader>
-					<View className="px-5 py-4 hover:bg-accent/50 active:bg-accent/70">
+			<Collapsible>
+				<CollapsibleTrigger asChild className="relative">
+					<View className="px-5 py-4 hover:bg-accent/50 active:bg-accent/70 relative">
 						<View className="flex-1 flex-row items-center gap-4">
 							<View className="bg-primary/15 p-2.5 rounded-xl">
 								{transaction.type === "contract_call" ? (
@@ -57,9 +58,9 @@ export const TransactionItem = ({ transaction }: TransactionItemProps) => {
 							/>
 						</View>
 					</View>
-				</CollapseHeader>
+				</CollapsibleTrigger>
 
-				<CollapseBody>
+				<CollapsibleContent>
 					<View className="px-5 py-4 bg-accent/10">
 						{/* Explorer Link */}
 						<TouchableOpacity
@@ -69,7 +70,7 @@ export const TransactionItem = ({ transaction }: TransactionItemProps) => {
 							className="flex-row items-center justify-end gap-2 mb-5 w-fit"
 						>
 							<ExternalLink
-								className="h-4 w-4 text-primary"
+								className="h-3 w-3 text-primary"
 								strokeWidth={1.25}
 							/>
 							<Text className="text-sm font-medium text-primary">
@@ -108,39 +109,51 @@ export const TransactionItem = ({ transaction }: TransactionItemProps) => {
 									<Coins className="h-4 w-4 text-primary" strokeWidth={1.25} />
 									<Text className="font-semibold">Token Transfers</Text>
 								</View>
-								{transaction.details.ftTransfers.map((transfer, index) => (
-									<View
-										key={index}
-										className="py-3 border-b border-border/50 last:border-0"
-									>
-										<View className="flex-row items-center justify-between">
-											<Text className="text-base font-semibold">
-												{transfer.amount.toLocaleString()}
-											</Text>
-											<Text className="text-sm font-medium text-muted-foreground">
-												{transfer.asset.split("::")[1]}
-											</Text>
-										</View>
-										<View className="mt-2 space-y-1">
-											<View className="flex-row items-center gap-2">
-												<View className="h-2 w-2 rounded-full bg-red-500/20">
-													<View className="h-1 w-1 rounded-full bg-red-500 m-0.5" />
+								{transaction.details.ftTransfers.map(
+									async (transfer, index) => {
+										const toBns = await getPrimaryBnsName(transfer.to);
+										const toDisplay = toBns
+											? toBns
+											: truncateAddress(transfer.to);
+
+										const fromBns = await getPrimaryBnsName(transfer.from);
+										const fromDisplay = fromBns
+											? fromBns
+											: truncateAddress(transfer.to);
+
+										return (
+											<View
+												key={index}
+												className="py-3 border-b border-border/50 last:border-0"
+											>
+												<View className="flex-row items-center justify-between">
+													<Text className="text-base font-semibold">
+														{transfer.amount.toLocaleString()}
+													</Text>
+													<Text className="text-sm font-medium text-muted-foreground">
+														{transfer.asset.split("::")[1]}
+													</Text>
 												</View>
-												<Muted className="text-xs">
-													From: {truncateAddress(transfer.from)}
-												</Muted>
-											</View>
-											<View className="flex-row items-center gap-2">
-												<View className="h-2 w-2 rounded-full bg-green-500/20">
-													<View className="h-1 w-1 rounded-full bg-green-500 m-0.5" />
+												<View className="mt-2 space-y-1">
+													<View className="flex-row items-center gap-2">
+														<View className="h-2 w-2 rounded-full bg-red-500/20">
+															<View className="h-1 w-1 rounded-full bg-red-500 m-0.5" />
+														</View>
+														<Muted className="text-xs">
+															From: {fromDisplay}
+														</Muted>
+													</View>
+													<View className="flex-row items-center gap-2">
+														<View className="h-2 w-2 rounded-full bg-green-500/20">
+															<View className="h-1 w-1 rounded-full bg-green-500 m-0.5" />
+														</View>
+														<Muted className="text-xs">To: {toDisplay}</Muted>
+													</View>
 												</View>
-												<Muted className="text-xs">
-													To: {truncateAddress(transfer.to)}
-												</Muted>
 											</View>
-										</View>
-									</View>
-								))}
+										);
+									},
+								)}
 							</View>
 						)}
 
@@ -181,8 +194,8 @@ export const TransactionItem = ({ transaction }: TransactionItemProps) => {
 							</View>
 						)}
 					</View>
-				</CollapseBody>
-			</Collapse>
+				</CollapsibleContent>
+			</Collapsible>
 		</View>
 	);
 };
