@@ -8,6 +8,7 @@ import { SheetManager } from "react-native-actions-sheet";
 import { AccountBalance } from "~/types/balance";
 import { useRouter } from "expo-router";
 import { TokenData } from "~/types/token";
+import { string } from "zod";
 
 const homeActions = [
 	{
@@ -31,9 +32,13 @@ const homeActions = [
 export default function HomeActions({
 	mergedTokens,
 	isLoading,
+	stxAddr,
+	bns,
 }: {
 	mergedTokens?: any;
 	isLoading: boolean;
+	bns: string | null;
+	stxAddr: string;
 }) {
 	const router = useRouter();
 	return (
@@ -50,6 +55,11 @@ export default function HomeActions({
 							});
 						} else if (item.route === "swap") {
 							router.push({ pathname: "/(authenticated)/(modals)/swap" });
+						} else if (item.route === "receive") {
+							await SheetManager.show("receive-sheet", {
+								payload: { stxAddr, bns },
+								context: "global",
+							});
 						}
 					}}
 				>

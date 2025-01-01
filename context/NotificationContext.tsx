@@ -10,6 +10,15 @@ import * as Notifications from "expo-notifications";
 import { EventSubscription } from "expo-modules-core";
 import { registerForPushNotificationsAsync } from "~/utils/registerForPushNotificationsAsync";
 
+// Add this configuration at the start
+Notifications.setNotificationHandler({
+	handleNotification: async () => ({
+		shouldShowAlert: true,
+		shouldPlaySound: true,
+		shouldSetBadge: true,
+	}),
+});
+
 interface NotificationContextType {
 	expoPushToken: string | null;
 	notification: Notifications.Notification | null;
@@ -41,7 +50,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 	const [notification, setNotification] =
 		useState<Notifications.Notification | null>(null);
 	const [error, setError] = useState<Error | null>(null);
-
 	const notificationListener = useRef<EventSubscription>();
 	const responseListener = useRef<EventSubscription>();
 
