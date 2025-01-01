@@ -1,5 +1,6 @@
 import { RouteDefinition } from "react-native-actions-sheet";
 import { registerSheet, SheetDefinition } from "react-native-actions-sheet";
+import ReceiveSheet from "~/components/home/ReceiveSheet";
 // import NetworkFeeSheet from "~/app/(authenticated)/(tabs)/send/NewtworkFeeSheet";
 import AmountSheet from "~/components/send/AmountSheet";
 import ConfirmTxSheet from "~/components/send/ConfirmTxSheet";
@@ -15,6 +16,7 @@ registerSheet("select-token", SelectToken);
 registerSheet("amount-sheet", AmountSheet);
 // registerSheet("network-fee", NetworkFeeSheet);
 registerSheet("confirm-tx-sheet", ConfirmTxSheet, "modal");
+registerSheet("receive-sheet", ReceiveSheet);
 
 declare module "react-native-actions-sheet" {
 	interface Sheets {
@@ -26,6 +28,12 @@ declare module "react-native-actions-sheet" {
 						phrases: string;
 					};
 				}>;
+			};
+		}>;
+		"receive-sheet": SheetDefinition<{
+			payload: {
+				stxAddr: string;
+				bns: string | null;
 			};
 		}>;
 		"import-wallet-sheet": SheetDefinition;

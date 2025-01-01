@@ -7,4 +7,4 @@ export const API_BASE_URL = DEV
 	? "https://be3f-104-28-219-98.ngrok-free.app/"
 	: "http://localhost:3000/";
 export const NOTIFICATION_SERVICE_URL =
-	"https://cfe1-104-28-251-98.ngrok-free.app/";
+	"https://ea1e-104-28-251-99.ngrok-free.app/";

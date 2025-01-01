@@ -12,6 +12,7 @@ import { WalletData } from "~/types/wallet";
 import { _handleOpenTxInExplorer } from "~/utils/openTxInExplorer";
 import axios from "axios";
 import { NOTIFICATION_SERVICE_URL } from "~/lib/constants";
+import { useNotification } from "~/context/NotificationContext";
 
 const truncateTxID = (txID: string) => {
 	if (!txID) return "";
@@ -21,6 +22,7 @@ const truncateTxID = (txID: string) => {
 export default function TxSuccessRoute({
 	params,
 }: RouteScreenProps<"confirm-tx-sheet", "confirm-tx-route">) {
+	const { expoPushToken } = useNotification();
 	const [isTracking, setIsTracking] = useState(false);
 	const router = useRouter();
 	const txID = params.txID as string;
@@ -80,6 +82,7 @@ export default function TxSuccessRoute({
 									{
 										txID,
 										address: walletData.address,
+										expoPushToken,
 									},
 								);
 

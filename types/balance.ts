@@ -20,4 +20,5 @@ export type AccountBalance = {
 		};
 	};
 	non_fungible_tokens: Record<string, never>;
+	bns: string | null;
 };

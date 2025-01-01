@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
-import { H3, H4, Muted } from "~/components/ui/typography";
+import { H3, H4, Large, Muted } from "~/components/ui/typography";
 import { useQuery } from "react-query";
 import ActionButton from "~/components/ActionButton";
 import { useWalletStore } from "~/store/walletStore";
@@ -9,8 +9,11 @@ import { getAccountBalance } from "~/queries/balance";
 import CopyButton from "~/components/ui/Copy";
 import TokenList from "~/components/home/TokenList";
 import { getTokens } from "~/queries/token";
+import { useNotification } from "~/context/NotificationContext";
+import { AccountBalance } from "~/types/balance";
 
 export default function Page() {
+	const { expoPushToken } = useNotification();
 	const { walletData, isLoading: isWalletDataLoading } = useWalletStore();
 
 	// First query - get balance
@@ -20,7 +23,7 @@ export default function Page() {
 		error,
 		refetch,
 		isRefetching,
-	} = useQuery(
+	} = useQuery<AccountBalance | null>(
 		[`balance-${walletData?.address}`],
 		() => (walletData?.address ? getAccountBalance(walletData.address) : null),
 		{
@@ -86,7 +89,10 @@ export default function Page() {
 							loading={isRefetching}
 							text="Refresh"
 							variant={"secondary"}
-							onPress={async () => await refetch()}
+							onPress={async () => {
+								await refetch();
+								console.log(expoPushToken);
+							}}
 						/>
 					</View>
 				</View>
@@ -94,6 +100,8 @@ export default function Page() {
 			<HomeActions
 				mergedTokens={mergedTokens}
 				isLoading={isBalanceLoading || isTokenLoading || isRefetching}
+				bns={balanceData?.bns}
+				stxAddr={walletData?.address}
 			/>
 			<TokenList
 				mergedTokens={mergedTokens}
