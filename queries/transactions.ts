@@ -15,3 +15,15 @@ export const getRecentTransactions = async (
 		);
 	}
 };
+
+export const getMempoolTransactions = async (stxAddr: string) => {
+	try {
+		const url = `${HIRO_API_BASE_URL}extended/v1/tx/mempool?sender_address=${stxAddr}&order_by=fee&order=asc&limit=20&offset=0&unanchored=true`;
+		const { data } = await axios.get(url);
+		return data;
+	} catch (err) {
+		throw new Error(
+			err instanceof Error ? err.message : "Failed to fetch transactions",
+		);
+	}
+};

@@ -15,11 +15,11 @@ const detailsActions = [
 		route: "send",
 		icon: Send,
 	},
-	{
-		title: "Receive",
-		route: "receive",
-		icon: ArrowDown,
-	},
+	// {
+	// 	title: "Receive",
+	// 	route: "receive",
+	// 	icon: ArrowDown,
+	// },
 
 	{
 		title: "Swap",

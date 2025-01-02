@@ -30,13 +30,19 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="settings"
+				name="settings/index"
 				options={{
 					title: "Settings",
 					headerShown: false,
 					tabBarIcon: ({ size, color }) => (
 						<Settings strokeWidth={1.25} size={size} color={color} />
 					),
+				}}
+			/>
+			<Tabs.Screen
+				name="settings/notifications"
+				options={{
+					href: null,
 				}}
 			/>
 		</Tabs>
