@@ -65,24 +65,26 @@ export default function StxCityTab({ contractID }: { contractID: string }) {
 			) : token ? (
 				<Card className="">
 					<TokenDetails token={token} />
-					<CardFooter className="">
-						<Tabs
-							value={activeTab}
-							onValueChange={setActiveTab}
-							className="flex-1"
-						>
-							<TabsList className="flex-row w-full gap-4">
-								<TabsTrigger value="buy" className="flex-1">
-									<Text>Buy</Text>
-								</TabsTrigger>
-								<TabsTrigger value="sell" className="flex-1">
-									<Text className="text-destructive">Sell</Text>
-								</TabsTrigger>
-							</TabsList>
-							<StxCityBuy />
-							<StxCitySell />
-						</Tabs>
-					</CardFooter>
+					{token.progress !== 100 && (
+						<CardFooter className="">
+							<Tabs
+								value={activeTab}
+								onValueChange={setActiveTab}
+								className="flex-1"
+							>
+								<TabsList className="flex-row w-full gap-4">
+									<TabsTrigger value="buy" className="flex-1">
+										<Text>Buy</Text>
+									</TabsTrigger>
+									<TabsTrigger value="sell" className="flex-1">
+										<Text className="text-destructive">Sell</Text>
+									</TabsTrigger>
+								</TabsList>
+								<StxCityBuy />
+								<StxCitySell />
+							</Tabs>
+						</CardFooter>
+					)}
 				</Card>
 			) : (
 				<Text>This token was not listed on stx.city</Text>
