@@ -10,15 +10,17 @@ Mercury is a mobile trading application built with Expo React Native for the Sta
 - **Wallet Generation**: Create new secure STX wallets within the app
 - **Wallet Import**: Import existing wallets using standard recovery methods
 - **Multi-wallet Support**: Manage multiple STX wallets in one place
+- **QRCODE**: Get a qrcode for your address and feature to scan others qrcodes to send them tokens/stx.
 
 ### Token Operations
 
 - **Token Details**: View comprehensive information about your tokens including:
   - Current balance
   - Token metadata
-  - Price information
+  - Price information in USD(options to change is coming soon)
 - **Token Transfers**: Send tokens to other addresses with ease
 - **Transaction History**: Track all token-related transactions with detailed information
+- **Buy token directly from DEXES**: Ability to buy tokens in stx.city if its listed there
 
 ## Getting Started
 
