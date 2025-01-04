@@ -1,14 +1,12 @@
 import { Image } from "expo-image";
-import { View, Text } from "react-native";
-import { Muted, Small } from "../ui/typography";
+import { FlashList } from "@shopify/flash-list";
+import { View, Text, StyleSheet } from "react-native";
+import { H3, Muted, Small } from "../ui/typography";
 import React from "react";
 import { TokenItemSkeleton } from "../loading/TokenItemSkeleton";
 import { TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
 import { SheetManager } from "react-native-actions-sheet";
-
-const blurhash =
-	"|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
 export default function TokenList({
 	isLoading,
@@ -18,19 +16,26 @@ export default function TokenList({
 	mergedTokens: any;
 }) {
 	return (
-		<View className="flex flex-col gap-6 mt-4">
+		<View>
 			{isLoading ? (
-				<View className="flex flex-col gap-4">
+				<View className="flex flex-col gap-7">
 					<TokenItemSkeleton />
 					<TokenItemSkeleton />
 					<TokenItemSkeleton />
 					<TokenItemSkeleton />
 					<TokenItemSkeleton />
 				</View>
+			) : mergedTokens && mergedTokens.length > 0 ? (
+				<FlashList
+					renderItem={({ item: token }) => <TokenItem item={token} />}
+					estimatedItemSize={50}
+					data={mergedTokens}
+					scrollEnabled={false}
+					showsVerticalScrollIndicator={false}
+					showsHorizontalScrollIndicator={false}
+				/>
 			) : (
-				mergedTokens?.map((token, index) => (
-					<TokenItem key={`${token.id}-${index}`} item={token} />
-				))
+				<H3>No tokens</H3>
 			)}
 		</View>
 	);
@@ -42,7 +47,7 @@ export const TokenItem = ({ item }: { item: any }) => {
 		Math.pow(10, item.decimals ? item.decimals : 6);
 
 	return (
-		<TouchableOpacity className="">
+		<TouchableOpacity className="py-4">
 			<Link
 				href={{
 					pathname: "/(authenticated)/(tabs)/[contract]",
@@ -62,7 +67,7 @@ export const TokenItem = ({ item }: { item: any }) => {
 						<View>
 							<Image
 								source={item.image}
-								placeholder={{ blurhash }}
+								// placeholder={{ blurhash }}
 								contentFit="cover"
 								style={{ height: 40, width: 40, borderRadius: 20 }}
 								transition={1000}

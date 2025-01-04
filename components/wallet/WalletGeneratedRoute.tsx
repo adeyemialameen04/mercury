@@ -88,7 +88,7 @@ export default function WalletGeneratedRoute({
 								key={index}
 								style={{ width: "30%" }}
 								className={cn(
-									"p-3 border rounded-lg flex flex-row items-center justify-between bg-background border-border",
+									"p-3 border rounded-lg flex flex-row items-center justify-between bg-muted dark:border-none border-border",
 									isHidden && "bg-muted",
 								)}
 							>

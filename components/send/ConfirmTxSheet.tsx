@@ -19,7 +19,6 @@ export default function ConfirmTxSheet(props: SheetProps) {
 			routes={routes}
 			enableRouterBackNavigation={false}
 			initialRoute={"confirm-tx-route"}
-			closable={false}
 			containerStyle={{
 				backgroundColor: "#27282A",
 			}}

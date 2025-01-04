@@ -10,6 +10,7 @@ export function formatTransaction(transaction: AddressTransaction) {
 		blockHeight: block_height,
 		timestamp: new Date(block_time_iso).toLocaleString(),
 		details: {} as any,
+		tx_status: tx.tx_status,
 	};
 
 	if (tx_type === "contract_call" && contract_call) {

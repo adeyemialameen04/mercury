@@ -11,7 +11,7 @@ import { useState } from "react";
 import { WalletData } from "~/types/wallet";
 import { useWalletStore } from "~/store/walletStore";
 import { send } from "~/lib/services/send";
-import { truncateAddress } from "~/utils/truncateAddress";
+import { truncateAddress } from "~/utils/truncate";
 import { useQueryClient } from "react-query";
 
 export default function ConfirmTxRoute({
@@ -56,24 +56,18 @@ export default function ConfirmTxRoute({
 					</View>
 				</View>
 				<View className="flex gap-2 flex-row">
-					<Link
-						onPress={() => {
-							SheetManager.hide("confirm-tx-sheet");
+					<Button
+						variant={"default"}
+						className="flex-1"
+						onPress={async () => {
+							SheetManager.hide("confirm-tx-sheet", {
+								context: "modal",
+							});
+							// router.replace("/(authenticated)/(tabs)/home");
 						}}
-						href={"/(authenticated)/(tabs)/home"}
-						asChild
 					>
-						<Button
-							variant={"default"}
-							className="flex-1"
-							// onPress={async () => {
-							// 	SheetManager.hide("confirm-tx-sheet");
-							// 	router.push("/(authenticated)/(tabs)/home");
-							// }}
-						>
-							<Text>Cancel</Text>
-						</Button>
-					</Link>
+						<Text>Cancel</Text>
+					</Button>
 					<ActionButton
 						loading={isSending}
 						text="Confirm"
@@ -89,10 +83,10 @@ export default function ConfirmTxRoute({
 										walletData as WalletData,
 									);
 
-									queryClient.invalidateQueries([
+									await queryClient.invalidateQueries([
 										`balance-${walletData.address}`,
 									]);
-									queryClient.invalidateQueries([
+									await queryClient.invalidateQueries([
 										`tokens-${walletData.address}`,
 									]);
 
@@ -104,8 +98,6 @@ export default function ConfirmTxRoute({
 								}
 							} catch (error) {
 								console.error("Transaction failed:", error);
-								// Add appropriate error handling here
-								// You might want to show an error message to the user
 							} finally {
 								setIsSending(false);
 							}

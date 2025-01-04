@@ -1,67 +1,33 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
-import { H3, H4, Large, Muted } from "~/components/ui/typography";
-import { useQuery } from "react-query";
+import { H3, H4, Muted } from "~/components/ui/typography";
 import ActionButton from "~/components/ActionButton";
 import { useWalletStore } from "~/store/walletStore";
 import HomeActions from "~/components/home/HomeActions";
-import { getAccountBalance } from "~/queries/balance";
 import CopyButton from "~/components/ui/Copy";
 import TokenList from "~/components/home/TokenList";
-import { getTokens } from "~/queries/token";
 import { useNotification } from "~/context/NotificationContext";
-import { AccountBalance } from "~/types/balance";
-import MempoolTransactions from "~/components/home/MemPoolTransactions";
-import { WalletData } from "~/types/wallet";
+import { useWalletBalance } from "~/hooks/useWalletBalance";
+import { useQuery } from "react-query";
 
 export default function Page() {
 	const { expoPushToken } = useNotification();
 	const { walletData, isLoading: isWalletDataLoading } = useWalletStore();
+	const { balanceData, isLoading, error, refetch, mergedTokens } =
+		useWalletBalance(walletData);
 
-	// First query - get balance
-	const {
-		data: balanceData,
-		isLoading: isBalanceLoading,
-		error,
-		refetch,
-		isRefetching,
-	} = useQuery<AccountBalance | null>(
-		[`balance-${walletData?.address}`],
-		() => (walletData?.address ? getAccountBalance(walletData.address) : null),
-		{
-			enabled: !!walletData?.address,
-		},
-	);
-
-	const tokenIDS = React.useMemo(() => {
-		if (!balanceData?.fungible_tokens) return [];
-		return Object.keys(balanceData.fungible_tokens).map(
-			(key) => key.split("::")[0],
-		);
-	}, [balanceData]);
-
-	const { isLoading: isTokenLoading, data: tokensData } = useQuery(
-		[`tokens-${walletData?.address}`, tokenIDS],
-		() => getTokens(tokenIDS),
-		{
-			enabled: !!walletData?.address && tokenIDS.length > 0,
-		},
-	);
-
-	const mergedTokens = React.useMemo(() => {
-		if (!tokensData || !balanceData?.fungible_tokens) return [];
-
-		return tokensData.map((token) => {
-			const matchingKey = Object.keys(balanceData.fungible_tokens).find((key) =>
-				key.startsWith(token.contract),
-			);
-			if (matchingKey) {
-				const tokenBalance = balanceData.fungible_tokens[matchingKey].balance;
-				return { ...token, balance: tokenBalance };
-			}
-			return token;
-		});
-	}, [tokensData, balanceData]);
+	// useEffect(() => {
+	// 	const fetchData = async () => {
+	// 		try {
+	// 			const data = await curveList();
+	// 			console.log(data);
+	// 		} catch (error) {
+	// 			console.error("Failed to fetch curve data:", error);
+	// 		}
+	// 	};
+	//
+	// 	fetchData();
+	// }, []);
 
 	return (
 		<ScrollView
@@ -84,7 +50,7 @@ export default function Page() {
 					<View className="flex flex-col gap-1 flex-1">
 						<Muted>Total Balance</Muted>
 						<H3>
-							{isBalanceLoading
+							{isLoading
 								? "Loading..."
 								: error
 									? "Error loading balance"
@@ -94,7 +60,7 @@ export default function Page() {
 					</View>
 					<View className="flex-1">
 						<ActionButton
-							loading={isRefetching}
+							loading={isLoading}
 							text="Refresh"
 							variant={"secondary"}
 							onPress={async () => {
@@ -107,15 +73,12 @@ export default function Page() {
 			</View>
 			<HomeActions
 				mergedTokens={mergedTokens}
-				isLoading={isBalanceLoading || isTokenLoading || isRefetching}
-				bns={balanceData?.bns}
+				isLoading={isLoading}
+				bns={balanceData?.bns as string}
 				stxAddr={walletData?.address as string}
 			/>
 			{/* <MempoolTransactions walletData={walletData as WalletData} /> */}
-			<TokenList
-				mergedTokens={mergedTokens}
-				isLoading={isBalanceLoading || isTokenLoading || isRefetching}
-			/>
+			<TokenList mergedTokens={mergedTokens} isLoading={isLoading} />
 		</ScrollView>
 	);
 }

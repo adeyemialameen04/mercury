@@ -55,8 +55,8 @@ export default function Page() {
 	});
 
 	const onSubmit = async (values: FormData) => {
-		SheetManager.show("confirm-tx-sheet", {
-			context: "modal",
+		await SheetManager.show("confirm-tx-sheet", {
+			context: "global",
 			payload: {
 				tokenData,
 				buyParams: {

@@ -32,7 +32,7 @@ const schema = z.object({
 export type FormData = z.infer<typeof schema>;
 
 export default function Page() {
-	const { tokenData } = useLocalSearchParams();
+	const { tokenData, receiverAddr } = useLocalSearchParams();
 	const router = useRouter();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -52,7 +52,9 @@ export default function Page() {
 		formState: { errors },
 	} = useForm<FormData>({
 		defaultValues: {
-			receiverAddr: "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z",
+			receiverAddr: receiverAddr
+				? (receiverAddr as string)
+				: "SPQ9B3SYFV0AFYY96QN5ZJBNGCRRZCCMFHY0M34Z",
 			memo: "",
 		},
 		resolver: zodResolver(schema),
@@ -77,7 +79,7 @@ export default function Page() {
 			};
 
 			// Navigate with error handling
-			await router.push({
+			router.push({
 				pathname: "/send/step2",
 				params: navigationParams,
 			});

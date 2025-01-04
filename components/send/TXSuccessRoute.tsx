@@ -61,7 +61,7 @@ export default function TxSuccessRoute({
 					className="flex-1"
 					onPress={() => {
 						SheetManager.hide("confirm-tx-sheet");
-						router.push("/(authenticated)/(tabs)/home");
+						router.replace("/(authenticated)/(tabs)/home");
 					}}
 				>
 					<Text>Close</Text>

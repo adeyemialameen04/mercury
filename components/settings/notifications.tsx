@@ -12,6 +12,7 @@ import { Lead } from "../ui/typography";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { Switch } from "react-native-switch";
 import { Link } from "expo-router";
+import ActionButton from "../ActionButton";
 
 export const Notifications = () => {
 	const { isDarkColorScheme } = useColorScheme();
@@ -49,6 +50,12 @@ export const Notifications = () => {
 									New token notifications
 								</Label>
 							</View>
+							<ActionButton
+								loading={false}
+								text="Save"
+								variant={"secondary"}
+								className="mt-3"
+							/>
 						</CardContent>
 					</Card>
 				</CollapsibleContent>
