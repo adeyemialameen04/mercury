@@ -22,10 +22,11 @@ export function WalletSheetWithRouter(props: SheetProps) {
 			routes={routes}
 			id={props.sheetId}
 			initialRoute={
-				pathname === "/settings" ? "seed-phrases" : "generate-wallet"
+				pathname === "/" ? "generate-wallet" : "wallet-generated-route"
 			}
-			useBottomSafeAreaPadding
-			safeAreaInsets={insets}
+			// useBottomSafeAreaPadding
+			// safeAreaInsets={insets}
+			isModal={false}
 			closable={pathname === "/settings" ? true : false}
 			{...props}
 		/>

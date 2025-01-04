@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { setStringAsync } from "expo-clipboard";
 import { View, TouchableOpacity } from "react-native";
 import {
 	Collapsible,
@@ -6,7 +7,7 @@ import {
 	CollapsibleContent,
 } from "~/components/ui/collapsible";
 import { _handleOpenTxInExplorer } from "~/utils/openTxInExplorer";
-import { truncateAddress } from "~/utils/truncateAddress";
+import { truncateAddress } from "~/utils/truncate";
 import { Muted } from "../ui/typography";
 import { File } from "~/lib/icons/File";
 import { Coins } from "~/lib/icons/Coins";
@@ -16,21 +17,98 @@ import { ExternalLink } from "~/lib/icons/ExternalLink";
 import { Text } from "../ui/text";
 import { formatTransaction } from "~/utils/formatTransaction";
 import { getPrimaryBnsName } from "~/queries/bns";
+import { useQuery } from "react-query";
+import { cn } from "~/lib/utils";
 
 interface TransactionItemProps {
 	transaction: ReturnType<typeof formatTransaction>;
 }
 
+const TransferDetails = React.memo(
+	({ transfer, index }: { transfer: any; index: number }) => {
+		// Use separate queries for 'to' and 'from' BNS names
+		const { data: toBns } = useQuery(
+			["bnsName", transfer.to],
+			() => getPrimaryBnsName(transfer.to),
+			{
+				// Only fetch if it's an address that needs resolving
+				enabled: !!transfer.to,
+				// Cache the results for 1 hour since BNS names don't change often
+				cacheTime: 1000 * 60 * 60,
+				// Show stale data while refetching
+				staleTime: 1000 * 60 * 60,
+				// Start with truncated address
+				placeholderData: truncateAddress(transfer.to),
+			},
+		);
+
+		const { data: fromBns } = useQuery(
+			["bnsName", transfer.from],
+			() => getPrimaryBnsName(transfer.from),
+			{
+				enabled: !!transfer.from,
+				cacheTime: 1000 * 60 * 60,
+				staleTime: 1000 * 60 * 60,
+				placeholderData: truncateAddress(transfer.from),
+			},
+		);
+
+		// Use the BNS name if available, otherwise use truncated address
+		const toDisplay = toBns || truncateAddress(transfer.to);
+		const fromDisplay = fromBns || truncateAddress(transfer.from);
+
+		return (
+			<View
+				key={index}
+				className="py-3 border-b border-border/50 last:border-0"
+			>
+				<View className="flex-row items-center justify-between">
+					<Text className="text-base font-semibold">
+						{transfer.amount?.toLocaleString()}
+					</Text>
+					<Text className="text-sm font-medium text-muted-foreground">
+						{transfer.asset.split("::")[1]}
+					</Text>
+				</View>
+				<View className="mt-2 space-y-1">
+					<View className="flex-row items-center gap-2">
+						<View className="h-2 w-2 rounded-full bg-red-500/20">
+							<View className="h-1 w-1 rounded-full bg-red-500 m-0.5" />
+						</View>
+						<Muted className="text-xs">From: {fromDisplay}</Muted>
+					</View>
+					<View className="flex-row items-center gap-2">
+						<View className="h-2 w-2 rounded-full bg-green-500/20">
+							<View className="h-1 w-1 rounded-full bg-green-500 m-0.5" />
+						</View>
+						<Muted className="text-xs">To: {toDisplay}</Muted>
+					</View>
+				</View>
+			</View>
+		);
+	},
+);
+
 export const TransactionItem = ({ transaction }: TransactionItemProps) => {
+	const [isOpen, setIsOpen] = useState(false);
+	const renderTransfers = isOpen && transaction.details.ftTransfers;
 	return (
 		<View className="mb-4 rounded-xl border border-border bg-card overflow-hidden shadow-sm">
-			<Collapsible>
+			<Collapsible open={isOpen} onOpenChange={setIsOpen}>
 				<CollapsibleTrigger asChild className="relative">
 					<View className="px-5 py-4 hover:bg-accent/50 active:bg-accent/70 relative">
 						<View className="flex-1 flex-row items-center gap-4">
 							<View className="bg-primary/15 p-2.5 rounded-xl">
 								{transaction.type === "contract_call" ? (
-									<File className="h-6 w-6 text-primary" strokeWidth={1.25} />
+									<File
+										className={cn(
+											"h-6 w-6",
+											transaction.tx_status === "success"
+												? "text-green-600"
+												: "text-destructive",
+										)}
+										strokeWidth={1.25}
+									/>
 								) : transaction.type.includes("transfer") ? (
 									<Coins className="h-6 w-6 text-primary" strokeWidth={1.25} />
 								) : (
@@ -45,9 +123,13 @@ export const TransactionItem = ({ transaction }: TransactionItemProps) => {
 								<Text className="font-semibold text-base capitalize">
 									{transaction.type.replace("_", " ")}
 								</Text>
-								<Text className="text-xs text-muted-foreground mt-0.5">
-									{truncateAddress(transaction.id)}
-								</Text>
+								<TouchableOpacity
+									onPress={async () => {
+										await setStringAsync(transaction.id);
+									}}
+								>
+									<Muted className="">{truncateAddress(transaction.id)}</Muted>
+								</TouchableOpacity>
 							</View>
 
 							<ChevronRight
@@ -93,67 +175,30 @@ export const TransactionItem = ({ transaction }: TransactionItemProps) => {
 										</Text>
 									</View>
 									<View>
-										<Muted className="text-xs mb-1">Function</Muted>
+										<Muted className="text-xs">Function</Muted>
 										<Text className="text-sm font-medium">
 											{transaction.details.functionName}
 										</Text>
+										{/* <Text> {transaction.tx_status.replace("_", " ")}</Text> */}
 									</View>
 								</View>
 							</View>
 						)}
 
 						{/* Token Transfers */}
-						{transaction.details.ftTransfers?.length > 0 && (
+						{renderTransfers && (
 							<View className="mb-5 p-4 rounded-xl bg-background/80 border border-border/80 backdrop-blur-sm">
 								<View className="flex-row items-center gap-2 mb-3">
 									<Coins className="h-4 w-4 text-primary" strokeWidth={1.25} />
 									<Text className="font-semibold">Token Transfers</Text>
 								</View>
-								{transaction.details.ftTransfers.map(
-									async (transfer, index) => {
-										const toBns = await getPrimaryBnsName(transfer.to);
-										const toDisplay = toBns
-											? toBns
-											: truncateAddress(transfer.to);
-
-										const fromBns = await getPrimaryBnsName(transfer.from);
-										const fromDisplay = fromBns
-											? fromBns
-											: truncateAddress(transfer.to);
-
-										return (
-											<View
-												key={index}
-												className="py-3 border-b border-border/50 last:border-0"
-											>
-												<View className="flex-row items-center justify-between">
-													<Text className="text-base font-semibold">
-														{transfer.amount.toLocaleString()}
-													</Text>
-													<Text className="text-sm font-medium text-muted-foreground">
-														{transfer.asset.split("::")[1]}
-													</Text>
-												</View>
-												<View className="mt-2 space-y-1">
-													<View className="flex-row items-center gap-2">
-														<View className="h-2 w-2 rounded-full bg-red-500/20">
-															<View className="h-1 w-1 rounded-full bg-red-500 m-0.5" />
-														</View>
-														<Muted className="text-xs">
-															From: {fromDisplay}
-														</Muted>
-													</View>
-													<View className="flex-row items-center gap-2">
-														<View className="h-2 w-2 rounded-full bg-green-500/20">
-															<View className="h-1 w-1 rounded-full bg-green-500 m-0.5" />
-														</View>
-														<Muted className="text-xs">To: {toDisplay}</Muted>
-													</View>
-												</View>
-											</View>
-										);
-									},
-								)}
+								{transaction.details.ftTransfers.map((transfer, index) => (
+									<TransferDetails
+										key={index}
+										transfer={transfer}
+										index={index}
+									/>
+								))}
 							</View>
 						)}
 

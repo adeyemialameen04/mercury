@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import Velar from "~/components/swap/velar";
 import VelarSwapInterface from "~/components/swap/velar";
 import { useWalletStore } from "~/store/walletStore";
+import { WalletData } from "~/types/wallet";
 
 const sdk = new VelarSDK();
 
@@ -52,7 +53,7 @@ export default function Page() {
 						))}
 					</TabsList>
 					<TabsContent value="velar">
-						<VelarSwapInterface walletData={walletData} />
+						<VelarSwapInterface walletData={walletData as WalletData} />
 					</TabsContent>
 				</Tabs>
 			</ScrollView>

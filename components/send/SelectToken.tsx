@@ -1,10 +1,11 @@
 import axios from "axios";
+import { FlashList } from "react-native-actions-sheet/dist/src/views/FlashList";
 import { Image } from "expo-image";
 import { View, Text } from "react-native";
 import ActionSheet, { SheetProps } from "react-native-actions-sheet";
 import { XVERSE_API_BASE_URL } from "~/lib/constants";
 import { useWalletStore } from "~/store/walletStore";
-import { Muted, Small } from "../ui/typography";
+import { H3, Muted, Small } from "../ui/typography";
 import React from "react";
 import { TokenItemSkeleton } from "../loading/TokenItemSkeleton";
 import { TouchableOpacity } from "react-native";
@@ -29,6 +30,7 @@ const getTokens = async (coins: string[]) => {
 export default function SelectToken(props: SheetProps<"select-token">) {
 	const mergedTokens = props.payload?.mergedTokens;
 	const isLoading = props.payload?.isLoading;
+	const receiverAddr = props.payload?.receiverAddr;
 
 	return (
 		<ActionSheet
@@ -37,24 +39,33 @@ export default function SelectToken(props: SheetProps<"select-token">) {
 				backgroundColor: "#27282A",
 			}}
 		>
-			<View className="flex flex-col gap-0">
-				{isLoading ? (
-					<View className="flex flex-col p-6 gap-4">
-						<TokenItemSkeleton />
-						<TokenItemSkeleton />
-						<TokenItemSkeleton />
-					</View>
-				) : (
-					mergedTokens?.map((token, index) => (
-						<TokenItem key={`${token.id}-${index}`} item={token} />
-					))
-				)}
-			</View>
+			{isLoading ? (
+				<View className="flex flex-col gap-4">
+					<TokenItemSkeleton />
+					<TokenItemSkeleton />
+					<TokenItemSkeleton />
+					<TokenItemSkeleton />
+					<TokenItemSkeleton />
+				</View>
+			) : mergedTokens && mergedTokens.length > 0 ? (
+				mergedTokens?.map((token, index) => (
+					<TokenItem
+						key={`${token.id}-${index}`}
+						item={token}
+						receiverAddr={receiverAddr}
+					/>
+				))
+			) : (
+				<H3>No tokens</H3>
+			)}
 		</ActionSheet>
 	);
 }
 
-export const TokenItem = ({ item }: { item: any }) => {
+export const TokenItem = ({
+	item,
+	receiverAddr,
+}: { item: any; receiverAddr?: string }) => {
 	const balAmt =
 		parseInt(item.balance, 10) /
 		Math.pow(10, item.decimals ? item.decimals : 6);
@@ -70,6 +81,7 @@ export const TokenItem = ({ item }: { item: any }) => {
 							formattedBalAmt: balAmt,
 							originalBal: item.balance,
 						}),
+						receiverAddr: receiverAddr,
 					},
 				}}
 				onPress={() => SheetManager.hide("select-token")}

@@ -1,43 +1,21 @@
 import { View, StyleSheet } from "react-native";
-import { useVideoPlayer, VideoView, VideoSource } from "expo-video";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { H4 } from "~/components/ui/typography";
 import { SheetManager } from "react-native-actions-sheet";
 import { Badge } from "~/components/ui/badge";
-
-const introVidUrl =
-	"https://res.cloudinary.com/dzsomaq4z/video/upload/v1734893537/intro_o9wkhc.mp4";
-const assetId = require("~/assets/videos/intro.mp4");
-
-const videoSource: VideoSource = {
-	assetId,
-	metadata: {
-		title: "Intro Video",
-		artist: "Not copyrighted",
-	},
-};
+import { ImageBackground } from "expo-image";
+import { StatusBar } from "expo-status-bar";
 
 export default function Page() {
-	const player = useVideoPlayer(videoSource, (player) => {
-		if (player) {
-			player.loop = true;
-			player.play();
-		}
-	});
-
 	return (
-		<View className="flex-1 justify-between flex flex-col">
-			<VideoView
-				player={player}
-				allowsFullscreen
-				allowsPictureInPicture={false}
-				style={styles.video}
-				nativeControls={false}
-				contentFit="cover"
-			/>
+		<ImageBackground
+			style={styles.imageBackground}
+			source={require("~/assets/images/degen.png")}
+		>
+			<StatusBar hidden />
 			<View className="mt-[80px] p-[20px]">
-				<H4 className="text-white text-2xl uppercase font-black">
+				<H4 className="text-white text-3xl uppercase font-black">
 					Ready to change the way you degen?
 				</H4>
 			</View>
@@ -67,14 +45,17 @@ export default function Page() {
 					<Text className="font-semibold">Import Wallet</Text>
 				</Button>
 			</View>
-		</View>
+		</ImageBackground>
 	);
 }
 
 const styles = StyleSheet.create({
-	video: {
+	imageBackground: {
 		width: "100%",
 		height: "100%",
 		position: "absolute",
+		display: "flex",
+		flexDirection: "column",
+		justifyContent: "space-between",
 	},
 });

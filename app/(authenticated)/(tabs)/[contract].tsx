@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
-import { ScrollView, View } from "react-native";
+import { ScrollView } from "react-native";
 import {
 	Card,
 	CardContent,
@@ -13,25 +13,20 @@ import { TokenData } from "~/types/token";
 import { Text } from "~/components/ui/text";
 import { useWalletStore } from "~/store/walletStore";
 import { useQuery } from "react-query";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { Separator } from "~/components/ui/separator";
+import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import {
 	AddressTransaction,
 	AddressTransactionsV2ListResponse,
 } from "~/types/transactions";
-import { TokenItemSkeleton } from "~/components/loading/TokenItemSkeleton";
-import {
-	formatDateHeader,
-	formatTransaction,
-	groupTransactionsByDate,
-} from "~/utils/formatTransaction";
+import { groupTransactionsByDate } from "~/utils/formatTransaction";
 import { _handleOpenTxInExplorer } from "~/utils/openTxInExplorer";
 import DetailsActions from "~/components/details/DetailsActions";
 import { getRecentTransactions } from "~/queries/transactions";
-import { TransactionItem } from "~/components/details/TransactionItem";
+import TransactionsTab from "~/components/details/TransactionsTab";
+import StxCityTab from "~/components/details/StxCityTab";
 
 export default function Page() {
-	const [activeTab, setActiveTab] = useState("transactions");
+	const [activeTab, setActiveTab] = useState("stx-city");
 	const { walletData } = useWalletStore();
 	const { tokenData: tokenDataStr } = useLocalSearchParams();
 	const tokenData: TokenData = JSON.parse(tokenDataStr as string);
@@ -67,12 +62,16 @@ export default function Page() {
 		return groupTransactionsByDate(tokenTransactions);
 	}, [tokenTransactions]);
 
+	// useEffect(() => {
+	// 	console.log(stxTokenData);
+	// }, [stxTokenData]);
+
 	return (
 		<ScrollView
 			className="flex-1 py-8"
 			bounces={false}
-			overScrollMode="never"
-			showsVerticalScrollIndicator={false}
+			// overScrollMode="never"
+			// showsVerticalScrollIndicator={false}
 		>
 			<Card className="w-full border-transparent">
 				<CardHeader className="items-center space-y-4">
@@ -103,37 +102,16 @@ export default function Page() {
 							<TabsTrigger value="market" className="flex-1">
 								<Text>Market</Text>
 							</TabsTrigger>
+							<TabsTrigger value="stx-city" className="flex-1">
+								<Text>Stx City</Text>
+							</TabsTrigger>
 						</TabsList>
-						<TabsContent value="transactions" className="mt-4">
-							{isTransactionsLoading ? (
-								<>
-									<TokenItemSkeleton />
-									<TokenItemSkeleton />
-									<TokenItemSkeleton />
-								</>
-							) : error ? (
-								<Text className="text-red-500">Error loading transactions</Text>
-							) : groupedTransactions.length === 0 ? (
-								<View className="flex items-center py-8">
-									<Text className="text-gray-500">No transactions found</Text>
-								</View>
-							) : (
-								groupedTransactions.map((group) => (
-									<View key={group.date.toISOString()} className="mb-6">
-										<View className="flex flex-row items-center gap-2 mb-4">
-											<Muted>{formatDateHeader(group.date)}</Muted>
-											<Separator className="flex-1" />
-										</View>
-										{group.transactions.map((transaction) => (
-											<TransactionItem
-												key={formatTransaction(transaction).id}
-												transaction={formatTransaction(transaction)}
-											/>
-										))}
-									</View>
-								))
-							)}
-						</TabsContent>
+						<TransactionsTab
+							isLoading={isTransactionsLoading}
+							groupedTransactions={groupedTransactions}
+							error={error}
+						/>
+						<StxCityTab contractID={tokenData.contract} />
 					</Tabs>
 				</CardContent>
 				<CardFooter />

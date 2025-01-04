@@ -20,6 +20,7 @@ import { useWalletStore } from "~/store/walletStore";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { NAV_THEME } from "~/lib/colors";
 import HomeHeader from "~/components/HomeHeader";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { NotificationProvider } from "~/context/NotificationContext";
 const LIGHT_THEME: Theme = {
 	...DefaultTheme,
@@ -87,35 +88,35 @@ function AppContent() {
 
 	return (
 		<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-			<NotificationProvider>
-				<QueryClientProvider client={queryClient}>
-					{/* <WebSocketProvider> */}
-					<SheetProvider context="global">
-						<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-						<Stack>
-							<Stack.Screen
-								name="index"
-								options={{
-									title: "Mercury",
-									headerShown: false,
-								}}
-							/>
-							<Stack.Screen
-								name="(authenticated)/(tabs)"
-								options={{
-									header: () => <HomeHeader />,
-								}}
-							/>
+			<GestureHandlerRootView>
+				<NotificationProvider>
+					<QueryClientProvider client={queryClient}>
+						<SheetProvider context="global">
+							<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+							<Stack>
+								<Stack.Screen
+									name="index"
+									options={{
+										title: "Mercury",
+										headerShown: false,
+									}}
+								/>
+								<Stack.Screen
+									name="(authenticated)/(tabs)"
+									options={{
+										header: () => <HomeHeader />,
+									}}
+								/>
 
-							<Stack.Screen
-								name="(authenticated)/(modals)"
-								options={{ headerShown: false }}
-							/>
-						</Stack>
-					</SheetProvider>
-					{/* </WebSocketProvider> */}
-				</QueryClientProvider>
-			</NotificationProvider>
+								<Stack.Screen
+									name="(authenticated)/(modals)"
+									options={{ headerShown: false }}
+								/>
+							</Stack>
+						</SheetProvider>
+					</QueryClientProvider>
+				</NotificationProvider>
+			</GestureHandlerRootView>
 			<PortalHost />
 		</ThemeProvider>
 	);

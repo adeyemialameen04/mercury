@@ -1,6 +1,9 @@
 import { View } from "react-native";
+import { SheetManager } from "react-native-actions-sheet";
 import { Notifications } from "~/components/settings/notifications";
 import { Security } from "~/components/settings/security";
+import { Button } from "~/components/ui/button";
+import { Text } from "~/components/ui/text";
 
 const settings = [
 	{
