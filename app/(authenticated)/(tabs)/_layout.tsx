@@ -1,4 +1,5 @@
 import { Tabs } from "expo-router";
+import { ArrowLeftRight } from "~/lib/icons/ArrowLeftRight";
 import React from "react";
 import colors from "~/lib/colors";
 import { Home } from "~/lib/icons/Home";
@@ -27,6 +28,16 @@ export default function TabLayout() {
 				options={{
 					headerShown: false,
 					href: null,
+				}}
+			/>
+			<Tabs.Screen
+				name="transactions"
+				options={{
+					title: "Transactions",
+					headerShown: false,
+					tabBarIcon: ({ size, color }) => (
+						<ArrowLeftRight strokeWidth={1.25} size={size} color={color} />
+					),
 				}}
 			/>
 			<Tabs.Screen

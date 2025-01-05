@@ -1,6 +1,6 @@
 import { Image } from "expo-image";
 import { FlashList } from "@shopify/flash-list";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text } from "react-native";
 import { H3, Muted, Small } from "../ui/typography";
 import React from "react";
 import { TokenItemSkeleton } from "../loading/TokenItemSkeleton";
@@ -28,7 +28,7 @@ export default function TokenList({
 			) : mergedTokens && mergedTokens.length > 0 ? (
 				<FlashList
 					renderItem={({ item: token }) => <TokenItem item={token} />}
-					estimatedItemSize={50}
+					estimatedItemSize={mergedTokens.length}
 					data={mergedTokens}
 					scrollEnabled={false}
 					showsVerticalScrollIndicator={false}

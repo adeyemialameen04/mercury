@@ -23,6 +23,10 @@ import { Button } from "../ui/button";
 import { truncateContract } from "~/utils/truncate";
 import { setStringAsync } from "expo-clipboard";
 import TokenCardSkeleton from "../loading/TokenCardSkeleton";
+import { useBalance } from "~/hooks/useBalance";
+import { WalletData } from "~/types/wallet";
+import { AccountBalance } from "~/types/balance";
+import { SheetManager } from "react-native-actions-sheet";
 
 const ItemStat = ({
 	icon: Icon,
@@ -44,7 +48,13 @@ const ItemStat = ({
 	);
 };
 
-export default function StxCityTab({ contractID }: { contractID: string }) {
+export default function StxCityTab({
+	contractID,
+	walletData,
+}: { contractID: string; walletData: WalletData }) {
+	const { isLoading: isBalanceLoading, data: balanceData } = useBalance(
+		walletData.address,
+	);
 	const [activeTab, setActiveTab] = useState("buy");
 	const { data, isLoading } = useQuery<StxCityTokenData>({
 		queryKey: [`token-stxcity-${contractID}`],
@@ -80,8 +90,16 @@ export default function StxCityTab({ contractID }: { contractID: string }) {
 										<Text className="text-destructive">Sell</Text>
 									</TabsTrigger>
 								</TabsList>
-								<StxCityBuy />
-								<StxCitySell />
+								<StxCityBuy
+									token={token}
+									balance={balanceData as AccountBalance}
+									walletData={walletData as WalletData}
+								/>
+								<StxCitySell
+									token={token}
+									balance={balanceData as AccountBalance}
+									walletData={walletData as WalletData}
+								/>
 							</Tabs>
 						</CardFooter>
 					)}

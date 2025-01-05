@@ -6,7 +6,7 @@ import {
 	CollapsibleTrigger,
 	CollapsibleContent,
 } from "~/components/ui/collapsible";
-import { _handleOpenTxInExplorer } from "~/utils/openTxInExplorer";
+import { _handleOpenTxInExplorer } from "~/utils/browser";
 import { truncateAddress } from "~/utils/truncate";
 import { Muted } from "../ui/typography";
 import { File } from "~/lib/icons/File";
