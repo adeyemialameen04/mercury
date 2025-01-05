@@ -69,11 +69,7 @@ export default function Page() {
 			/>
 			{/* <SelectToken mergedTokens={mergedTokens} isLoading={isLoading} /> */}
 			{/* <MempoolTransactions walletData={walletData as WalletData} /> */}
-			<TokenList
-				mergedTokens={mergedTokens}
-				isLoading={isLoading}
-				refetch={refetch}
-			/>
+			<TokenList mergedTokens={mergedTokens} isLoading={isLoading} />
 		</ScrollView>
 	);
 }

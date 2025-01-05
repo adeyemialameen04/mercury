@@ -11,11 +11,9 @@ import { SheetManager } from "react-native-actions-sheet";
 export default function TokenList({
 	isLoading,
 	mergedTokens,
-	refetch,
 }: {
 	isLoading: boolean;
 	mergedTokens: any;
-	refetch: any;
 }) {
 	return (
 		<View>
@@ -30,7 +28,7 @@ export default function TokenList({
 			) : mergedTokens && mergedTokens.length > 0 ? (
 				<FlashList
 					renderItem={({ item: token }) => <TokenItem item={token} />}
-					estimatedItemSize={50}
+					estimatedItemSize={mergedTokens.length}
 					data={mergedTokens}
 					scrollEnabled={false}
 					showsVerticalScrollIndicator={false}

@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 import { useQuery } from "react-query";
 import { MempoolTransaction } from "~/types/mempool";
 import { WalletData } from "~/types/wallet";
-import { getMempoolTransactions } from "~/queries/transactions";
+import { getAddressMempoolTransactions } from "~/queries/transactions";
 import { TransactionItem } from "../send/TransactionItem";
 import {
 	formatDateHeader,
@@ -37,7 +37,9 @@ export default function MempoolTransactions({
 	} = useQuery<AddressTransactionsV2ListResponse | null>(
 		[`mempool-${walletData?.address}`],
 		() =>
-			walletData?.address ? getMempoolTransactions(walletData.address) : null,
+			walletData?.address
+				? getAddressMempoolTransactions(walletData.address)
+				: null,
 		{
 			enabled: !!walletData?.address,
 		},

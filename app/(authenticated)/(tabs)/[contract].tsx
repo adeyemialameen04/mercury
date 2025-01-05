@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { memo, useCallback, useMemo, useState } from "react";
 import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
 import { RefreshControl, ScrollView } from "react-native";
@@ -26,8 +26,68 @@ import TransactionsTab from "~/components/details/TransactionsTab";
 import StxCityTab from "~/components/details/StxCityTab";
 import { WalletData } from "~/types/wallet";
 
+const TokenHeader = React.memo(
+	({
+		tokenData,
+	}: {
+		tokenData: TokenData;
+	}) => (
+		<CardHeader className="items-center space-y-4">
+			<Image
+				source={tokenData?.image}
+				contentFit="cover"
+				style={{ height: 50, width: 50, borderRadius: 25 }}
+				transition={1000}
+			/>
+			<Muted className="font-semibold">{tokenData?.name}</Muted>
+			<Large>
+				{tokenData.formattedBalAmt} {tokenData.ticker}
+			</Large>
+			<Text>
+				{tokenData.currentPrice !== undefined
+					? (tokenData.currentPrice * tokenData.formattedBalAmt).toFixed(2)
+					: 0}{" "}
+				USD
+			</Text>
+			<DetailsActions tokenData={tokenData} />
+		</CardHeader>
+	),
+);
+
+const TokenTabsContent = memo(
+	({
+		activeTab,
+		isLoading,
+		groupedTransactions,
+		error,
+		contractID,
+		walletData,
+	}: {
+		activeTab: string;
+		isLoading: boolean;
+		groupedTransactions: any[];
+		error: any;
+		contractID: string;
+		walletData: WalletData;
+	}) => {
+		if (activeTab === "transactions") {
+			return (
+				<TransactionsTab
+					isLoading={isLoading}
+					groupedTransactions={groupedTransactions}
+					error={error}
+				/>
+			);
+		}
+		if (activeTab === "stx-city") {
+			return <StxCityTab contractID={contractID} walletData={walletData} />;
+		}
+		return null;
+	},
+);
+
 export default function Page() {
-	const [activeTab, setActiveTab] = useState("stx-city");
+	const [activeTab, setActiveTab] = useState("transactions");
 	const { walletData } = useWalletStore();
 	const { tokenData: tokenDataStr } = useLocalSearchParams();
 	const tokenData: TokenData = JSON.parse(tokenDataStr as string);
@@ -51,23 +111,28 @@ export default function Page() {
 		},
 	);
 
-	const contractCalls = transactions?.results?.filter(
-		(item: AddressTransaction) => item?.tx?.tx_type === "contract_call",
+	const handleTabChange = useCallback((value: string) => {
+		setActiveTab(value);
+	}, []);
+
+	// const contractCalls = transactions?.results?.filter(
+	// 	(item: AddressTransaction) => item?.tx?.tx_type === "contract_call",
+	// );
+
+	const tokenTransactions = useMemo(() => {
+		if (!transactions?.results) return [];
+		return transactions.results.filter(
+			(item: AddressTransaction) =>
+				item?.tx?.tx_type === "contract_call" &&
+				item.tx.contract_call.contract_id === tokenData.contract,
+		);
+	}, [transactions?.results, tokenData.contract]);
+
+	// Memoize grouped transactions
+	const groupedTransactions = useMemo(
+		() => groupTransactionsByDate(tokenTransactions),
+		[tokenTransactions],
 	);
-
-	const tokenTransactions = contractCalls?.filter(
-		(item: AddressTransaction) =>
-			item.tx.contract_call.contract_id === tokenData.contract,
-	);
-
-	const groupedTransactions = useMemo(() => {
-		if (!tokenTransactions) return [];
-		return groupTransactionsByDate(tokenTransactions);
-	}, [tokenTransactions]);
-
-	// useEffect(() => {
-	// 	console.log(stxTokenData);
-	// }, [stxTokenData]);
 
 	return (
 		<ScrollView
@@ -76,32 +141,11 @@ export default function Page() {
 			refreshControl={
 				<RefreshControl refreshing={isRefetching} onRefresh={refetch} />
 			}
-
-			// overScrollMode="never"
-			// showsVerticalScrollIndicator={false}
 		>
 			<Card className="w-full border-transparent">
-				<CardHeader className="items-center space-y-4">
-					<Image
-						source={tokenData?.image}
-						contentFit="cover"
-						style={{ height: 50, width: 50, borderRadius: 25 }}
-						transition={1000}
-					/>
-					<Muted className="font-semibold">{tokenData?.name}</Muted>
-					<Large>
-						{tokenData.formattedBalAmt} {tokenData.ticker}
-					</Large>
-					<Text>
-						{tokenData.currentPrice !== undefined
-							? (tokenData.currentPrice * tokenData.formattedBalAmt).toFixed(2)
-							: 0}{" "}
-						USD
-					</Text>
-					<DetailsActions tokenData={tokenData} />
-				</CardHeader>
+				<TokenHeader tokenData={tokenData} />
 				<CardContent className="flex flex-col gap-4">
-					<Tabs value={activeTab} onValueChange={setActiveTab}>
+					<Tabs value={activeTab} onValueChange={handleTabChange}>
 						<TabsList className="flex-row w-full gap-4">
 							<TabsTrigger value="transactions" className="flex-1">
 								<Text>Transactions</Text>
@@ -113,15 +157,23 @@ export default function Page() {
 								<Text>Stx City</Text>
 							</TabsTrigger>
 						</TabsList>
-						<TransactionsTab
+						<TokenTabsContent
+							activeTab={activeTab}
 							isLoading={isTransactionsLoading}
 							groupedTransactions={groupedTransactions}
 							error={error}
-						/>
-						<StxCityTab
 							contractID={tokenData.contract}
 							walletData={walletData as WalletData}
 						/>
+						{/* <TransactionsTab */}
+						{/* 	isLoading={isTransactionsLoading} */}
+						{/* 	groupedTransactions={groupedTransactions} */}
+						{/* 	error={error} */}
+						{/* /> */}
+						{/* <StxCityTab */}
+						{/* 	contractID={tokenData.contract} */}
+						{/* 	walletData={walletData as WalletData} */}
+						{/* /> */}
 					</Tabs>
 				</CardContent>
 				<CardFooter />

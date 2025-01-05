@@ -7,3 +7,10 @@ export const _handleOpenTxInExplorer = async (txID: string) => {
 	);
 	console.log(result);
 };
+
+export const _handleOpenAddressInExplorer = async (address: string) => {
+	let result = await openBrowserAsync(
+		`${EXPLORER_BASE_URL}address/${address}?chain=mainnet`,
+	);
+	console.log(result);
+};

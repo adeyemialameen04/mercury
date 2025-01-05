@@ -19,6 +19,7 @@ import { Button } from "~/components/ui/button";
 import { Muted, Small } from "~/components/ui/typography";
 import { SheetManager } from "react-native-actions-sheet";
 import { TokenData } from "~/types/token";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const createSchema = (balance: string) =>
 	z.object({
@@ -72,7 +73,7 @@ export default function Page() {
 	};
 
 	return (
-		<ScrollView className="flex-1 p-6 py-10">
+		<SafeAreaView className="flex-1 p-6 py-10">
 			<Card className="w-full">
 				<CardHeader className="items-center space-y-2">
 					<Image
@@ -147,6 +148,6 @@ export default function Page() {
 					</Button>
 				</CardFooter>
 			</Card>
-		</ScrollView>
+		</SafeAreaView>
 	);
 }

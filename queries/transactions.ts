@@ -1,5 +1,5 @@
 import axios from "axios";
-import { HIRO_API_BASE_URL } from "~/lib/constants";
+import { HIRO_API_BASE_URL, STX_CITY_API_BASE_URL } from "~/lib/constants";
 import { AddressTransactionsV2ListResponse } from "~/types/transactions";
 
 export const getRecentTransactions = async (
@@ -16,9 +16,33 @@ export const getRecentTransactions = async (
 	}
 };
 
-export const getMempoolTransactions = async (stxAddr: string) => {
+export const getAddressMempoolTransactions = async (stxAddr: string) => {
 	try {
 		const url = `${HIRO_API_BASE_URL}extended/v1/tx/mempool?sender_address=${stxAddr}&order_by=fee&order=asc&limit=20&offset=0&unanchored=true`;
+		const { data } = await axios.get(url);
+		return data;
+	} catch (err) {
+		throw new Error(
+			err instanceof Error ? err.message : "Failed to fetch transactions",
+		);
+	}
+};
+
+export const getMempoolTransactions = async () => {
+	try {
+		const url = `${HIRO_API_BASE_URL}extended/v1/tx/mempool?order=asc&limit=20&offset=0&unanchored=true`;
+		const { data } = await axios.get(url);
+		return data;
+	} catch (err) {
+		throw new Error(
+			err instanceof Error ? err.message : "Failed to fetch transactions",
+		);
+	}
+};
+
+export const getMempoolStatsFromStxCity = async () => {
+	try {
+		const url = `${STX_CITY_API_BASE_URL}mempool/summary`;
 		const { data } = await axios.get(url);
 		return data;
 	} catch (err) {

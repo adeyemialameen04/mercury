@@ -9,10 +9,10 @@ import ActionButton from "../ActionButton";
 import { useState } from "react";
 import CopyButton from "../ui/Copy";
 import { WalletData } from "~/types/wallet";
-import { _handleOpenTxInExplorer } from "~/utils/openTxInExplorer";
 import axios from "axios";
 import { NOTIFICATION_SERVICE_URL } from "~/lib/constants";
 import { useNotification } from "~/context/NotificationContext";
+import { _handleOpenTxInExplorer } from "~/utils/browser";
 
 const truncateTxID = (txID: string) => {
 	if (!txID) return "";

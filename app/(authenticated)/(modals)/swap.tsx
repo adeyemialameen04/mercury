@@ -1,5 +1,5 @@
 import { ScrollView } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { SwapType, VelarSDK } from "@velarprotocol/velar-sdk";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
@@ -38,25 +38,23 @@ export default function Page() {
 	}, []);
 
 	return (
-		<SafeAreaProvider>
-			<ScrollView className="p-6 flex-1">
-				<Tabs value={activeTab} onValueChange={setActiveTab} className="gap-2">
-					<TabsList className="flex-row w-full gap-3">
-						{supportedSwaps.map((item) => (
-							<TabsTrigger
-								value={item.toLowerCase()}
-								className="flex-1 capitalize"
-								key={item}
-							>
-								<Text>{item}</Text>
-							</TabsTrigger>
-						))}
-					</TabsList>
-					<TabsContent value="velar">
-						<VelarSwapInterface walletData={walletData as WalletData} />
-					</TabsContent>
-				</Tabs>
-			</ScrollView>
-		</SafeAreaProvider>
+		<SafeAreaView className="p-6 flex-1">
+			<Tabs value={activeTab} onValueChange={setActiveTab} className="gap-2">
+				<TabsList className="flex-row w-full gap-3">
+					{supportedSwaps.map((item) => (
+						<TabsTrigger
+							value={item.toLowerCase()}
+							className="flex-1 capitalize"
+							key={item}
+						>
+							<Text>{item}</Text>
+						</TabsTrigger>
+					))}
+				</TabsList>
+				<TabsContent value="velar">
+					<VelarSwapInterface walletData={walletData as WalletData} />
+				</TabsContent>
+			</Tabs>
+		</SafeAreaView>
 	);
 }

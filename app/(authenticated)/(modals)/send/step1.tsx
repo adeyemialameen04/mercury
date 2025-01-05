@@ -18,6 +18,7 @@ import { Label } from "~/components/ui/label";
 import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
 import { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const schema = z.object({
 	receiverAddr: z
@@ -108,7 +109,7 @@ export default function Page() {
 	}
 
 	return (
-		<ScrollView className="flex-1 p-6 py-10">
+		<SafeAreaView className="flex-1 p-6 py-10">
 			<Card className="w-full">
 				<CardHeader className="items-center space-y-2">
 					<Image
@@ -175,6 +176,6 @@ export default function Page() {
 					</Button>
 				</CardFooter>
 			</Card>
-		</ScrollView>
+		</SafeAreaView>
 	);
 }
