@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import { H3, H4, Muted } from "~/components/ui/typography";
 import ActionButton from "~/components/ActionButton";
 import { useWalletStore } from "~/store/walletStore";
@@ -8,7 +8,6 @@ import CopyButton from "~/components/ui/Copy";
 import TokenList from "~/components/home/TokenList";
 import { useNotification } from "~/context/NotificationContext";
 import { useWalletBalance } from "~/hooks/useWalletBalance";
-import { useQuery } from "react-query";
 
 export default function Page() {
 	const { expoPushToken } = useNotification();
@@ -16,25 +15,15 @@ export default function Page() {
 	const { balanceData, isLoading, error, refetch, mergedTokens } =
 		useWalletBalance(walletData);
 
-	// useEffect(() => {
-	// 	const fetchData = async () => {
-	// 		try {
-	// 			const data = await curveList();
-	// 			console.log(data);
-	// 		} catch (error) {
-	// 			console.error("Failed to fetch curve data:", error);
-	// 		}
-	// 	};
-	//
-	// 	fetchData();
-	// }, []);
-
 	return (
 		<ScrollView
 			className="p-6 flex-1"
 			bounces={false}
 			overScrollMode="never"
 			showsVerticalScrollIndicator={false}
+			refreshControl={
+				<RefreshControl refreshing={isLoading} onRefresh={refetch} />
+			}
 		>
 			<View className="flex flex-col justify-between gap-4">
 				<View className="flex flex-col gap-1">
@@ -78,7 +67,11 @@ export default function Page() {
 				stxAddr={walletData?.address as string}
 			/>
 			{/* <MempoolTransactions walletData={walletData as WalletData} /> */}
-			<TokenList mergedTokens={mergedTokens} isLoading={isLoading} />
+			<TokenList
+				mergedTokens={mergedTokens}
+				isLoading={isLoading}
+				refetch={refetch}
+			/>
 		</ScrollView>
 	);
 }

@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
-import { ScrollView } from "react-native";
+import { RefreshControl, ScrollView } from "react-native";
 import {
 	Card,
 	CardContent,
@@ -24,6 +24,7 @@ import DetailsActions from "~/components/details/DetailsActions";
 import { getRecentTransactions } from "~/queries/transactions";
 import TransactionsTab from "~/components/details/TransactionsTab";
 import StxCityTab from "~/components/details/StxCityTab";
+import { WalletData } from "~/types/wallet";
 
 export default function Page() {
 	const [activeTab, setActiveTab] = useState("stx-city");
@@ -35,6 +36,8 @@ export default function Page() {
 		data: transactions,
 		isLoading: isTransactionsLoading,
 		error,
+		refetch,
+		isRefetching,
 	} = useQuery<AddressTransactionsV2ListResponse>(
 		[`transactions-${walletData?.address}`],
 		async () => {
@@ -70,6 +73,10 @@ export default function Page() {
 		<ScrollView
 			className="flex-1 py-8"
 			bounces={false}
+			refreshControl={
+				<RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+			}
+
 			// overScrollMode="never"
 			// showsVerticalScrollIndicator={false}
 		>
@@ -111,7 +118,10 @@ export default function Page() {
 							groupedTransactions={groupedTransactions}
 							error={error}
 						/>
-						<StxCityTab contractID={tokenData.contract} />
+						<StxCityTab
+							contractID={tokenData.contract}
+							walletData={walletData as WalletData}
+						/>
 					</Tabs>
 				</CardContent>
 				<CardFooter />

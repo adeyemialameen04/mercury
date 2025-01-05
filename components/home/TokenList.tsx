@@ -1,6 +1,6 @@
 import { Image } from "expo-image";
 import { FlashList } from "@shopify/flash-list";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text } from "react-native";
 import { H3, Muted, Small } from "../ui/typography";
 import React from "react";
 import { TokenItemSkeleton } from "../loading/TokenItemSkeleton";
@@ -11,9 +11,11 @@ import { SheetManager } from "react-native-actions-sheet";
 export default function TokenList({
 	isLoading,
 	mergedTokens,
+	refetch,
 }: {
 	isLoading: boolean;
 	mergedTokens: any;
+	refetch: any;
 }) {
 	return (
 		<View>

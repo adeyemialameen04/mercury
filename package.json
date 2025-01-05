@@ -91,7 +91,6 @@
     "readable-stream": "^4.6.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss": "3.3.5",
-    "tailwindcss-animate": "^1.0.7",
     "text-encoding": "^0.7.0",
     "uuid": "^11.0.3",
     "zod": "^3.24.1",

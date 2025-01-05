@@ -43,6 +43,7 @@ export const Security = () => {
 							loading={false}
 							text="Reset Wallet"
 							variant={"ghost"}
+							className="mt-3"
 							textClassname="text-destructive"
 						/>
 					</CardContent>

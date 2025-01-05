@@ -1,5 +1,6 @@
 import axios, { AxiosError } from "axios";
 import {
+	API_BASE_URL,
 	HIRO_API_BASE_URL,
 	STX_CITY_API_BASE_URL,
 	XVERSE_API_BASE_URL,
@@ -35,6 +36,7 @@ export async function getTokenMetadataFromSTXCity(contractID: string) {
 		}
 		console.log("starting to fetch");
 		const url = `${STX_CITY_API_BASE_URL}searchTokens?token_contract=${contractID}`;
+		// const url = `${API_BASE_URL}searchTokens/${contractID}`;
 		const { data } = await axios.get(url);
 		console.log(data, url, "hereee");
 		return data;

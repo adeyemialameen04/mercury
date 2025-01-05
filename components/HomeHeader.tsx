@@ -12,12 +12,11 @@ import { Image } from "expo-image";
 
 const blurhash =
 	"|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
-const GITHUB_AVATAR_URI = "https://github.com/mrzachnugent.png";
 
 export default function HomeHeader() {
 	const router = useRouter();
 	const [permission, requestPermission] = useCameraPermissions();
-	const { top, bottom } = useSafeAreaInsets();
+	const { top } = useSafeAreaInsets();
 
 	const handleScanPress = async () => {
 		console.log(permission?.granted);
@@ -29,11 +28,7 @@ export default function HomeHeader() {
 	};
 
 	return (
-		<BlurView
-			intensity={80}
-			tint="extraLight"
-			style={{ paddingTop: top, paddingBottom: bottom }}
-		>
+		<BlurView intensity={80} tint="extraLight" style={{ paddingTop: top }}>
 			<View className="px-5 flex-row bg-transparent h-14 gap-4 justify-between items-center flex">
 				<Image
 					source={require("~/assets/images/stacks-logo.png")}
