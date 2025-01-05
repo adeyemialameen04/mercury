@@ -71,7 +71,7 @@ export const TokenItem = ({
 		Math.pow(10, item.decimals ? item.decimals : 6);
 
 	return (
-		<TouchableOpacity className="p-6">
+		<TouchableOpacity className="py-6">
 			<Link
 				href={{
 					pathname: "/(authenticated)/(modals)/send/step1",

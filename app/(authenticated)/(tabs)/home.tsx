@@ -8,6 +8,7 @@ import CopyButton from "~/components/ui/Copy";
 import TokenList from "~/components/home/TokenList";
 import { useNotification } from "~/context/NotificationContext";
 import { useWalletBalance } from "~/hooks/useWalletBalance";
+import { SelectToken } from "~/components/SelectToken";
 
 export default function Page() {
 	const { expoPushToken } = useNotification();
@@ -66,6 +67,7 @@ export default function Page() {
 				bns={balanceData?.bns as string}
 				stxAddr={walletData?.address as string}
 			/>
+			{/* <SelectToken mergedTokens={mergedTokens} isLoading={isLoading} /> */}
 			{/* <MempoolTransactions walletData={walletData as WalletData} /> */}
 			<TokenList
 				mergedTokens={mergedTokens}

@@ -22,6 +22,7 @@ import { NAV_THEME } from "~/lib/colors";
 import HomeHeader from "~/components/HomeHeader";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { NotificationProvider } from "~/context/NotificationContext";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 const LIGHT_THEME: Theme = {
 	...DefaultTheme,
 	colors: NAV_THEME.light,
@@ -89,33 +90,35 @@ function AppContent() {
 	return (
 		<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
 			<GestureHandlerRootView>
-				<NotificationProvider>
-					<QueryClientProvider client={queryClient}>
-						<SheetProvider context="global">
-							<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-							<Stack>
-								<Stack.Screen
-									name="index"
-									options={{
-										title: "Mercury",
-										headerShown: false,
-									}}
-								/>
-								<Stack.Screen
-									name="(authenticated)/(tabs)"
-									options={{
-										header: () => <HomeHeader />,
-									}}
-								/>
+				<BottomSheetModalProvider>
+					<NotificationProvider>
+						<QueryClientProvider client={queryClient}>
+							<SheetProvider context="global">
+								<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+								<Stack>
+									<Stack.Screen
+										name="index"
+										options={{
+											title: "Mercury",
+											headerShown: false,
+										}}
+									/>
+									<Stack.Screen
+										name="(authenticated)/(tabs)"
+										options={{
+											header: () => <HomeHeader />,
+										}}
+									/>
 
-								<Stack.Screen
-									name="(authenticated)/(modals)"
-									options={{ headerShown: false }}
-								/>
-							</Stack>
-						</SheetProvider>
-					</QueryClientProvider>
-				</NotificationProvider>
+									<Stack.Screen
+										name="(authenticated)/(modals)"
+										options={{ headerShown: false }}
+									/>
+								</Stack>
+							</SheetProvider>
+						</QueryClientProvider>
+					</NotificationProvider>
+				</BottomSheetModalProvider>
 			</GestureHandlerRootView>
 			<PortalHost />
 		</ThemeProvider>

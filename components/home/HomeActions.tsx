@@ -5,22 +5,21 @@ import { Send } from "~/lib/icons/Send";
 import { Small } from "../ui/typography";
 import { Pressable } from "react-native";
 import { SheetManager } from "react-native-actions-sheet";
-import { AccountBalance } from "~/types/balance";
 import { useRouter } from "expo-router";
-import { TokenData } from "~/types/token";
-import { string } from "zod";
+import { SelectToken } from "../SelectToken";
+import ReceiveStx from "../ReceiveStx";
 
 const homeActions = [
-	{
-		title: "Send",
-		route: "send",
-		icon: Send,
-	},
-	{
-		title: "Receive",
-		route: "receive",
-		icon: ArrowDown,
-	},
+	// {
+	// 	title: "Send",
+	// 	route: "send",
+	// 	icon: Send,
+	// },
+	// {
+	// 	title: "Receive",
+	// 	route: "receive",
+	// 	icon: ArrowDown,
+	// },
 
 	{
 		title: "Swap",
@@ -43,6 +42,8 @@ export default function HomeActions({
 	const router = useRouter();
 	return (
 		<View className="flex flex-row gap-4 items-center justify-center my-4">
+			<SelectToken isLoading={isLoading} mergedTokens={mergedTokens} />
+			<ReceiveStx bns={bns} stxAddr={stxAddr} />
 			{homeActions.map((item) => (
 				<Pressable
 					className="flex flex-col flex-1 rounded-md max-h-none bg-muted items-center justify-center gap-3 py-3"
