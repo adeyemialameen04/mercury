@@ -41,6 +41,7 @@ export const getSellableTokens = async (
 		console.log(1);
 		const res = await fetchCallReadOnlyFunction(txOptions);
 		console.log(2);
+		console.log(res);
 
 		return res;
 	} catch (err) {

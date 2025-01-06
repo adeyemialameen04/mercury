@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { H3, H4, Muted } from "~/components/ui/typography";
 import ActionButton from "~/components/ActionButton";
@@ -8,12 +8,31 @@ import CopyButton from "~/components/ui/Copy";
 import TokenList from "~/components/home/TokenList";
 import { useNotification } from "~/context/NotificationContext";
 import { useWalletBalance } from "~/hooks/useWalletBalance";
+import { sc } from "~/lib/stacks/blockchain-client";
 
 export default function Page() {
 	const { expoPushToken } = useNotification();
 	const { walletData, isLoading: isWalletDataLoading } = useWalletStore();
 	const { balanceData, isLoading, error, refetch, mergedTokens } =
 		useWalletBalance(walletData);
+
+	useEffect(() => {
+		const subscribeAdressBalance = () => {
+			sc.subscribeAddressStxBalance(
+				walletData?.address as string,
+				async (addr, balance) => {
+					// console.log(balance);
+					await refetch();
+				},
+			);
+		};
+
+		subscribeAdressBalance();
+
+		return () => {
+			sc.unsubscribeAddressStxBalance(walletData?.address as string);
+		};
+	}, []);
 
 	return (
 		<ScrollView

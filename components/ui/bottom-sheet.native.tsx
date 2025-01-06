@@ -291,7 +291,7 @@ const BottomSheetHeader = React.forwardRef<
 			{...props}
 		>
 			{children}
-			<Button onPress={close} variant="ghost" className="pr-4">
+			<Button onPress={close} variant="ghost" size={"icon"} className="">
 				<X className="text-muted-foreground" size={24} />
 			</Button>
 		</View>

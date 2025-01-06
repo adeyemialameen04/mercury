@@ -6,7 +6,6 @@ import { Image } from "expo-image";
 import { H4 } from "../ui/typography";
 import { Wallet } from "~/lib/icons/Wallet";
 import { Button } from "../ui/button";
-import { Maximize2 } from "~/lib/icons/Maximize2";
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { StxCityTokenInfo } from "~/types/token";
 import { AccountBalance } from "~/types/balance";
@@ -20,6 +19,8 @@ import {
 	broadcastTransaction,
 	makeContractCall,
 } from "@stacks/transactions";
+import { StxCityTransactionBroadcastedSheet } from "./StxCityTransactionBroadcastedSheet";
+import { useBottomSheet } from "../ui/bottom-sheet.native";
 
 interface StxCityBuyProps {
 	token: StxCityTokenInfo;
@@ -40,7 +41,6 @@ const STX_PRICE_OPTIONS: PriceOptionType[] = [
 	{ value: "300", display: "300" },
 ];
 
-const MAX_PRICE = "1000";
 const DECIMAL_REGEX = /^\d*\.?\d*$/;
 const SLIPPAGE_REGEX = /^\d*\.?\d{0,2}$/;
 
@@ -53,12 +53,6 @@ const PriceOption = ({
 }) => (
 	<Button className="flex-1" variant="secondary" onPress={onPress}>
 		<Text>{option.display}</Text>
-	</Button>
-);
-
-const MaxButton = ({ onPress }: { onPress: () => void }) => (
-	<Button className="flex-1" variant="secondary" onPress={onPress}>
-		<Maximize2 className="text-primary" strokeWidth={1.25} size={18} />
 	</Button>
 );
 
@@ -85,6 +79,8 @@ export default function StxCityBuy({
 	const [slippage, setSlippage] = useState(INITIAL_SLIPPAGE);
 	const [buyableAmount, setBuyableAmount] = useState("0");
 	const [isLoading, setIsLoading] = useState(false);
+	const { open, ref } = useBottomSheet();
+	const [txID, setTxID] = useState("");
 
 	const dexContract = useMemo(
 		() => token.dex_contract.split("."),
@@ -212,7 +208,9 @@ export default function StxCityBuy({
 				transaction: tx,
 				network: "mainnet",
 			});
+			setTxID(res.txid);
 			console.log("3: Transaction broadcast", res);
+			open();
 		} catch (err) {
 			console.error("Error in handleBuy:", err);
 			if (err instanceof Error) {
@@ -271,7 +269,6 @@ export default function StxCityBuy({
 						onPress={() => setStxPrice(option.value)}
 					/>
 				))}
-				{/* <MaxButton onPress={() => setStxPrice(MAX_PRICE)} /> */}
 			</View>
 
 			<View className="flex justify-between items-center flex-row">
@@ -294,6 +291,20 @@ export default function StxCityBuy({
 				disabled={isLoading || !stxPrice || Number(stxPrice) <= 0}
 				text={isLoading ? "Calculating..." : "Buy"}
 				loading={isLoading}
+			/>
+			<Button
+				variant={"secondary"}
+				size={"sm"}
+				onPress={() => {
+					open();
+				}}
+			>
+				<Text>Open</Text>
+			</Button>
+			<StxCityTransactionBroadcastedSheet
+				sheetRef={ref}
+				txID={txID}
+				walletData={walletData}
 			/>
 		</TabsContent>
 	);
