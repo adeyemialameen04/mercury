@@ -6,11 +6,10 @@ import { Image } from "expo-image";
 import { H4 } from "../ui/typography";
 import { Wallet } from "~/lib/icons/Wallet";
 import { Button } from "../ui/button";
-import { Maximize2 } from "~/lib/icons/Maximize2";
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { StxCityTokenInfo } from "~/types/token";
 import { AccountBalance } from "~/types/balance";
-import { getBuyableTokens, getSellableTokens } from "~/lib/stacks/stxcity";
+import { getSellableTokens } from "~/lib/stacks/stxcity";
 import { WalletData } from "~/types/wallet";
 import ActionButton from "../ActionButton";
 import {
@@ -19,13 +18,17 @@ import {
 	Pc,
 	broadcastTransaction,
 	makeContractCall,
+	SignedContractCallOptions,
 } from "@stacks/transactions";
+import { StxCityTransactionBroadcastedSheet } from "./StxCityTransactionBroadcastedSheet";
+import { useBottomSheet } from "../ui/bottom-sheet.native";
 
 interface StxCitySellProps {
 	token: StxCityTokenInfo;
 	balance: AccountBalance;
 	walletData: WalletData;
 }
+
 interface PriceOptionType {
 	value: string;
 	display: string;
@@ -33,14 +36,13 @@ interface PriceOptionType {
 
 const INITIAL_SLIPPAGE = "0.5";
 
-const STX_PRICE_OPTIONS: PriceOptionType[] = [
-	{ value: "10", display: "10" },
-	{ value: "50", display: "50" },
-	{ value: "100", display: "100" },
-	{ value: "300", display: "300" },
+const PERCENTAGE_OPTIONS: PriceOptionType[] = [
+	{ value: "25", display: "25%" },
+	{ value: "50", display: "50%" },
+	{ value: "75", display: "75%" },
+	{ value: "100", display: "100%" },
 ];
 
-const MAX_PRICE = "1000";
 const DECIMAL_REGEX = /^\d*\.?\d*$/;
 const SLIPPAGE_REGEX = /^\d*\.?\d{0,2}$/;
 
@@ -53,12 +55,6 @@ const PriceOption = ({
 }) => (
 	<Button className="flex-1" variant="secondary" onPress={onPress}>
 		<Text>{option.display}</Text>
-	</Button>
-);
-
-const MaxButton = ({ onPress }: { onPress: () => void }) => (
-	<Button className="flex-1" variant="secondary" onPress={onPress}>
-		<Maximize2 className="text-primary" strokeWidth={1.25} size={18} />
 	</Button>
 );
 
@@ -85,14 +81,21 @@ export default function StxCitySell({
 	balance,
 	walletData,
 }: StxCitySellProps) {
-	const [stxPrice, setStxPrice] = useState("0.00001");
+	const [tokenAmount, setTokenAmount] = useState("5");
+	const { open, ref } = useBottomSheet();
+	const [txID, setTxID] = useState("");
 	const [slippage, setSlippage] = useState(INITIAL_SLIPPAGE);
 	const [sellableAmount, setSellableAmount] = useState("0");
 	const [isLoading, setIsLoading] = useState(false);
+
 	const matchingKey = Object.keys(balance.fungible_tokens).find((key) =>
 		key.startsWith(token.token_contract),
 	);
 	const tokenBalance = balance.fungible_tokens[matchingKey].balance;
+	const formattedTokenBalance = useMemo(
+		() => (tokenBalance ? Number(tokenBalance) / 10 ** token.decimals : 0),
+		[tokenBalance, token.decimals],
+	);
 
 	const dexContract = useMemo(
 		() => token.dex_contract.split("."),
@@ -101,6 +104,17 @@ export default function StxCitySell({
 	const tokenContract = useMemo(
 		() => token.token_contract.split("."),
 		[token.dex_contract],
+	);
+
+	const handlePercentageSelect = useCallback(
+		(percentage: string) => {
+			const amount = (
+				(Number(percentage) / 100) *
+				formattedTokenBalance
+			).toFixed(4);
+			setTokenAmount(amount);
+		},
+		[formattedTokenBalance],
 	);
 
 	const calculateReceivableStx = useCallback(
@@ -112,48 +126,65 @@ export default function StxCitySell({
 				const amountNum = Number.parseFloat(amountStr);
 				const amount = Math.floor(amountNum * 10 ** 6);
 
-				const receivableStx = await getSellableTokens(
+				if (isNaN(amountNum) || amountNum <= 0) {
+					setSellableAmount("0");
+					return;
+				}
+
+				// Check if amount exceeds 0.002 (moved after valid number check)
+				// if (amountNum >= 0.002) {
+				// 	setSellableAmount("0");
+				// 	return;
+				// }
+
+				// Convert amount to contract format before calling
+				// const contractAmount = (amountNum * 10 ** (token.decimals || 6)).toString();
+
+				const response = await getSellableTokens(
 					dexContract,
 					walletData.address,
 					amount,
 				);
-				console.log(JSON.stringify(receivableStx, null, 2));
 
-				if (receivableStx) {
-					const buyableTokenAmount =
-						receivableStx?.type === "ok"
-							? receivableStx.value.value["buyable-token"].value
-							: 0n;
+				if (!response) {
+					throw new Error("Failed to fetch sellable tokens");
+				}
 
-					const readableValue =
-						Number(buyableTokenAmount) / 10 ** token.decimals;
+				if (
+					response.type === "ok" &&
+					response.value?.value?.["receivable-stx"]?.value
+				) {
+					const receivableStx = BigInt(
+						response.value.value["receivable-stx"].value,
+					);
+					const readableValue = Number(receivableStx) / 10 ** 6;
 					setSellableAmount(readableValue.toFixed(4));
+				} else {
+					throw new Error("Invalid response format from contract");
 				}
 			} catch (error) {
-				console.error("Error calculating buyable tokens:", error);
-				console.log(JSON.stringify(error, null, 2));
+				console.error("Error calculating sellable tokens:", error);
 				setSellableAmount("0");
 			} finally {
 				setIsLoading(false);
 			}
 		},
-		[dexContract, walletData.address, token.decimals],
+		[dexContract, walletData.address],
 	);
 
-	// Debounced effect for calculating buyable tokens
 	useEffect(() => {
 		const timeoutId = setTimeout(() => {
-			if (stxPrice) {
-				calculateReceivableStx(stxPrice);
+			if (tokenAmount) {
+				calculateReceivableStx(tokenAmount);
 			}
-		}, 500); // 500ms debounce
+		}, 500);
 
 		return () => clearTimeout(timeoutId);
-	}, [stxPrice, calculateReceivableStx]);
+	}, [tokenAmount, calculateReceivableStx]);
 
 	const handlePriceChange = useCallback((value: string) => {
 		if (value === "" || DECIMAL_REGEX.test(value)) {
-			setStxPrice(value);
+			setTokenAmount(value);
 		}
 	}, []);
 
@@ -166,74 +197,51 @@ export default function StxCitySell({
 	const handleSell = useCallback(async () => {
 		setIsLoading(true);
 		try {
-			console.log("Buy clicked", {
-				amount: stxPrice,
-				slippage,
-				expectedTokens: sellableAmount,
-			});
-			console.log("0: Starting transaction");
-
-			const uintCvAmount = Number.parseFloat(stxPrice) * 10 ** 6;
-			console.log("1: Calculated amount", uintCvAmount);
-
-			// Convert buyableAmount to the proper format for post conditions
-			const buyableAmountForPostCondition = BigInt(
-				Math.floor(Number(sellableAmount) * 10 ** token.decimals),
+			const uintCvAmount = Number.parseFloat(tokenAmount) * 10 ** 6;
+			const decimals = token.decimals ? token.decimals : 6;
+			const expectedStxUintCv = BigInt(
+				Math.floor(Number(sellableAmount) * 10 ** decimals),
 			);
-
-			console.log("Contract details:", {
-				contractAddress: dexContract[0],
-				contractName: dexContract[1],
-				tokenContract: `${tokenContract[0]}.${tokenContract[1]}`,
-				address: walletData.address,
-				buyableAmountForPostCondition: buyableAmountForPostCondition.toString(),
-			});
 
 			const functionArgs = [
 				contractPrincipalCV(tokenContract[0], tokenContract[1]),
 				uintCV(uintCvAmount),
 			];
-			console.log("1.5: Created function args");
 
 			const postConditions = [
-				Pc.principal(walletData.address).willSendEq(uintCvAmount).ustx(),
 				Pc.principal(dexContract[0] + "." + dexContract[1])
-					.willSendGte(buyableAmountForPostCondition)
+					.willSendGte(expectedStxUintCv)
+					.ustx(),
+				Pc.principal(walletData.address)
+					.willSendEq(uintCvAmount)
 					.ft(`${tokenContract[0]}.${tokenContract[1]}`, token.symbol),
 			];
-			console.log("1.8: Created post conditions");
 
-			const txOptions = {
+			const txOptions: SignedContractCallOptions = {
 				contractAddress: dexContract[0],
 				contractName: dexContract[1],
-				functionName: "buy",
+				functionName: "sell",
 				functionArgs,
 				postConditions,
 				validateWithAbi: true,
 				senderKey: walletData.stxPrivateKey,
 			};
-			console.log("1.9: Created transaction options");
 
 			const tx = await makeContractCall(txOptions);
-			console.log("2: Contract call created");
-
 			const res = await broadcastTransaction({
 				transaction: tx,
 				network: "mainnet",
 			});
+			setTxID(res.txid);
 			console.log("3: Transaction broadcast", res);
+			open();
 		} catch (err) {
-			console.error("Error in handleBuy:", err);
-			if (err instanceof Error) {
-				console.error("Error message:", err.message);
-				console.error("Error stack:", err.stack);
-			}
+			console.error("Error in handleSell:", err);
 		} finally {
 			setIsLoading(false);
 		}
 	}, [
-		stxPrice,
-		slippage,
+		tokenAmount,
 		sellableAmount,
 		dexContract,
 		tokenContract,
@@ -245,7 +253,7 @@ export default function StxCitySell({
 	const receiveText = useMemo(
 		() =>
 			isLoading ? "Calculating..." : `Would receive min ${sellableAmount} STX`,
-		[isLoading, sellableAmount, token.symbol],
+		[isLoading, sellableAmount],
 	);
 
 	return (
@@ -268,23 +276,20 @@ export default function StxCitySell({
 				<Input
 					placeholder="0"
 					className="flex-1"
-					value={stxPrice}
+					value={tokenAmount}
 					onChangeText={handlePriceChange}
 					keyboardType="numeric"
 				/>
 			</View>
-
 			<View className="flex-1 justify-center items-center gap-3 flex flex-row">
-				{STX_PRICE_OPTIONS.map((option) => (
+				{PERCENTAGE_OPTIONS.map((option) => (
 					<PriceOption
 						key={option.value}
 						option={option}
-						onPress={() => setStxPrice(option.value)}
+						onPress={() => handlePercentageSelect(option.value)}
 					/>
 				))}
-				{/* <MaxButton onPress={() => setStxPrice(MAX_PRICE)} /> */}
 			</View>
-
 			<View className="flex justify-between items-center flex-row">
 				<H4 className="flex-1">Slippage (%)</H4>
 				<Input
@@ -295,16 +300,19 @@ export default function StxCitySell({
 					keyboardType="numeric"
 				/>
 			</View>
-
 			<View>
 				<Text>{receiveText}</Text>
 			</View>
-
 			<ActionButton
 				onPress={handleSell}
-				disabled={isLoading || !stxPrice || Number(stxPrice) <= 0}
+				disabled={isLoading || !tokenAmount || Number(tokenAmount) <= 0}
 				text={isLoading ? "Calculating..." : "Sell"}
 				loading={isLoading}
+			/>
+			<StxCityTransactionBroadcastedSheet
+				sheetRef={ref}
+				txID={txID}
+				walletData={walletData}
 			/>
 		</TabsContent>
 	);

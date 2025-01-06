@@ -49,7 +49,6 @@ export function GenerateWalletRoute({
 					</Button>
 					<ActionButton
 						text={isGenerating ? "Generating ..." : "Generate Wallet"}
-						className="flex-1"
 						loading={isGenerating}
 						onPress={async () => {
 							setIsGenerating(true);

@@ -5,7 +5,7 @@ import { TrendingUp } from "~/lib/icons/TrendingUp";
 import { getTokenMetadataFromSTXCity } from "~/queries/token";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Text } from "../ui/text";
-import { memo, useState } from "react";
+import { memo, useState, Fragment } from "react";
 import { H4, Muted } from "../ui/typography";
 import { TouchableOpacity, View } from "react-native";
 import { Image } from "expo-image";
@@ -26,7 +26,6 @@ import TokenCardSkeleton from "../loading/TokenCardSkeleton";
 import { useBalance } from "~/hooks/useBalance";
 import { WalletData } from "~/types/wallet";
 import { AccountBalance } from "~/types/balance";
-import { SheetManager } from "react-native-actions-sheet";
 
 const ItemStat = ({
 	icon: Icon,
@@ -113,7 +112,7 @@ export default function StxCityTab({
 
 const TokenDetails = memo(({ token }: { token: StxCityTokenInfo }) => {
 	return (
-		<>
+		<Fragment>
 			<CardHeader className="">
 				<View className="flex flex-row gap-4 items-center">
 					<Image
@@ -137,7 +136,7 @@ const TokenDetails = memo(({ token }: { token: StxCityTokenInfo }) => {
 						<Text className="text-green-400">
 							{Math.ceil(token.progress)}% {"   "}
 						</Text>
-						{(token.progress / 100) * token.target_stx} of{" "}
+						{((token.progress / 100) * token.target_stx).toFixed(4)} of{" "}
 						{token.target_stx.toLocaleString()} STX
 					</Text>
 					<Progress max={100} value={token.progress} />
@@ -197,6 +196,6 @@ const TokenDetails = memo(({ token }: { token: StxCityTokenInfo }) => {
 					</CollapsibleContent>
 				</Collapsible>
 			</CardContent>
-		</>
+		</Fragment>
 	);
 });
