@@ -8,7 +8,6 @@ import CopyButton from "~/components/ui/Copy";
 import TokenList from "~/components/home/TokenList";
 import { useNotification } from "~/context/NotificationContext";
 import { useWalletBalance } from "~/hooks/useWalletBalance";
-import { SelectToken } from "~/components/SelectToken";
 
 export default function Page() {
 	const { expoPushToken } = useNotification();

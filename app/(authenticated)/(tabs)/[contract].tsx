@@ -19,7 +19,6 @@ import {
 	AddressTransactionsV2ListResponse,
 } from "~/types/transactions";
 import { groupTransactionsByDate } from "~/utils/formatTransaction";
-import { _handleOpenTxInExplorer } from "~/utils/openTxInExplorer";
 import DetailsActions from "~/components/details/DetailsActions";
 import { getRecentTransactions } from "~/queries/transactions";
 import TransactionsTab from "~/components/details/TransactionsTab";
@@ -87,9 +86,12 @@ const TokenTabsContent = memo(
 );
 
 export default function Page() {
-	const [activeTab, setActiveTab] = useState("transactions");
+	const { tokenData: tokenDataStr, activeTab: activeTabFromParams } =
+		useLocalSearchParams();
+	const [activeTab, setActiveTab] = useState(
+		activeTabFromParams ?? "transactions",
+	);
 	const { walletData } = useWalletStore();
-	const { tokenData: tokenDataStr } = useLocalSearchParams();
 	const tokenData: TokenData = JSON.parse(tokenDataStr as string);
 
 	const {
