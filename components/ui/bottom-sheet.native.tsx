@@ -9,6 +9,7 @@ import {
 	BottomSheetFooter as GBottomSheetFooter,
 	BottomSheetTextInput as GBottomSheetTextInput,
 	BottomSheetView as GBottomSheetView,
+	BottomSheetFlashList as GBottomSheetFlashList,
 	useBottomSheetModal,
 } from "@gorhom/bottom-sheet";
 import type { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
@@ -268,6 +269,35 @@ const BottomSheetFlatList = React.forwardRef<
 	);
 });
 
+type BottomSheetFlashListRef = React.ElementRef<typeof GBottomSheetFlashList>;
+type BottomSheetFlashtListProps = React.ComponentPropsWithoutRef<
+	typeof GBottomSheetFlashList
+>;
+
+const BottomSheetFlashList = React.forwardRef<
+	BottomSheetFlashListRef,
+	BottomSheetFlashtListProps
+>(({ contentContainerStyle, ...props }, ref) => {
+	const insets = useSafeAreaInsets();
+
+	return (
+		<View className="flex-1">
+			<GBottomSheetFlashList
+				ref={ref}
+				contentContainerStyle={[
+					{
+						paddingBottom: insets.bottom,
+						paddingVertical: 16,
+					},
+					contentContainerStyle,
+				]}
+				keyboardShouldPersistTaps="handled"
+				{...props}
+			/>
+		</View>
+	);
+});
+
 type BottomSheetHeaderRef = React.ElementRef<typeof View>;
 type BottomSheetHeaderProps = React.ComponentPropsWithoutRef<typeof View>;
 const BottomSheetHeader = React.forwardRef<
@@ -349,6 +379,7 @@ export {
 	BottomSheetCloseTrigger,
 	BottomSheetContent,
 	BottomSheetFlatList,
+	BottomSheetFlashList,
 	BottomSheetFooter,
 	BottomSheetHeader,
 	BottomSheetOpenTrigger,

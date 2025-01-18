@@ -3,7 +3,7 @@ import { Skeleton } from "../ui/skeleton";
 
 export const TokenItemSkeleton = () => {
 	return (
-		<View className="flex justify-center">
+		<View className="flex justify-center py-1">
 			<View className="flex gap-3 flex-row">
 				<View>
 					<Skeleton className="h-10 w-10 rounded-full" />

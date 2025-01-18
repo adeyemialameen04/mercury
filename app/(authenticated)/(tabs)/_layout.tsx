@@ -1,4 +1,5 @@
 import { Tabs } from "expo-router";
+import { Repeat } from "~/lib/icons/Repeat";
 import { ArrowLeftRight } from "~/lib/icons/ArrowLeftRight";
 import React from "react";
 import colors from "~/lib/colors";
@@ -10,6 +11,7 @@ export default function TabLayout() {
 		<Tabs
 			screenOptions={{
 				tabBarActiveTintColor: colors.primary,
+				animation: "shift",
 			}}
 		>
 			<Tabs.Screen
@@ -28,6 +30,16 @@ export default function TabLayout() {
 				options={{
 					headerShown: false,
 					href: null,
+				}}
+			/>
+			<Tabs.Screen
+				name="swap"
+				options={{
+					title: "Swap",
+					headerShown: false,
+					tabBarIcon: ({ size, color }) => (
+						<Repeat strokeWidth={1.25} size={size} color={color} />
+					),
 				}}
 			/>
 			<Tabs.Screen

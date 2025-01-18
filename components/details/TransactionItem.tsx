@@ -19,6 +19,7 @@ import { formatTransaction } from "~/utils/formatTransaction";
 import { getPrimaryBnsName } from "~/queries/bns";
 import { useQuery } from "react-query";
 import { cn } from "~/lib/utils";
+import { Badge } from "../ui/badge";
 
 interface TransactionItemProps {
 	transaction: ReturnType<typeof formatTransaction>;
@@ -174,12 +175,13 @@ export const TransactionItem = ({ transaction }: TransactionItemProps) => {
 											{transaction.details.contractId}
 										</Text>
 									</View>
-									<View>
+									<View className="mt-2 flex flex-col justify-start items-start gap-1">
 										<Muted className="text-xs">Function</Muted>
-										<Text className="text-sm font-medium">
-											{transaction.details.functionName}
-										</Text>
-										{/* <Text> {transaction.tx_status.replace("_", " ")}</Text> */}
+										<Badge>
+											<Text className="text-xs">
+												{transaction.details.functionName}
+											</Text>
+										</Badge>
 									</View>
 								</View>
 							</View>

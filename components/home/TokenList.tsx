@@ -18,13 +18,15 @@ export default function TokenList({
 	return (
 		<View>
 			{isLoading ? (
-				<View className="flex flex-col gap-7">
-					<TokenItemSkeleton />
-					<TokenItemSkeleton />
-					<TokenItemSkeleton />
-					<TokenItemSkeleton />
-					<TokenItemSkeleton />
-				</View>
+				<FlashList
+					renderItem={() => <TokenItemSkeleton />}
+					estimatedItemSize={10}
+					data={[1, 2, 3, 4, 5, 6, 7, , 9, 10]}
+					scrollEnabled={false}
+					showsVerticalScrollIndicator={false}
+					showsHorizontalScrollIndicator={false}
+					contentContainerClassName="gap-4 flex flex-col"
+				/>
 			) : mergedTokens && mergedTokens.length > 0 ? (
 				<FlashList
 					renderItem={({ item: token }) => <TokenItem item={token} />}

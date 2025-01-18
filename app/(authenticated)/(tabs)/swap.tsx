@@ -1,12 +1,9 @@
-import { ScrollView } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { SwapType, VelarSDK } from "@velarprotocol/velar-sdk";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { getTokens, VelarSDK } from "@velarprotocol/velar-sdk";
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Text } from "~/components/ui/text";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import Velar from "~/components/swap/velar";
-import VelarSwapInterface from "~/components/swap/velar";
+import VelarSwapInterface from "~/components/swap/Velar";
 import { useWalletStore } from "~/store/walletStore";
 import { WalletData } from "~/types/wallet";
 
@@ -22,23 +19,24 @@ export default function Page() {
 	const { walletData } = useWalletStore();
 	const [pairs, setPairs] = useState<any[]>([]); // Replace 'any' with your pairs type
 
-	useEffect(() => {
-		const fetchPairs = async () => {
-			try {
-				const fetchedPairs = await getPairs("VELAR");
-				console.log(JSON.stringify(fetchedPairs, null, 2));
-
-				setPairs(fetchedPairs);
-			} catch (error) {
-				console.error("Error fetching pairs:", error);
-			}
-		};
-
-		fetchPairs();
-	}, []);
+	// useEffect(() => {
+	// 	const fetchPairs = async () => {
+	// 		try {
+	// 			const tokens = await getTokens();
+	// 			// const fetchedPairs = await getPairs("VELAR");
+	// 			console.log(JSON.stringify(tokens, null, 2));
+	//
+	// 			// setPairs(tokens);
+	// 		} catch (error) {
+	// 			console.error("Error fetching pairs:", error);
+	// 		}
+	// 	};
+	//
+	// 	fetchPairs();
+	// }, []);
 
 	return (
-		<SafeAreaView className="p-6 flex-1">
+		<SafeAreaView className="px-6 flex-1">
 			<Tabs value={activeTab} onValueChange={setActiveTab} className="gap-2">
 				<TabsList className="flex-row w-full gap-3">
 					{supportedSwaps.map((item) => (

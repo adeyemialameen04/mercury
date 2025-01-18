@@ -16,6 +16,8 @@ import axios from "axios";
 import { API_BASE_URL } from "~/lib/constants";
 import { useNotification } from "~/context/NotificationContext";
 import { useWalletStore } from "~/store/walletStore";
+import { FormLabel } from "../ui/form";
+import { Input } from "../ui/input";
 
 export const Notifications = () => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -31,7 +33,7 @@ export const Notifications = () => {
 			</CollapsibleTrigger>
 			<CollapsibleContent>
 				<Card>
-					<CardContent className="mt-5">
+					<CardContent className="mt-5 flex flex-col gap-3">
 						<View className="flex-row items-center gap-2">
 							<Switch
 								checked={checked}
@@ -44,14 +46,18 @@ export const Notifications = () => {
 									setChecked((prev) => !prev);
 								}}
 							>
-								New token notifications
+								Sniping Tokens
 							</Label>
 						</View>
+						{/* <View className="flex-row items-center gap-2 flex-1"> */}
+						{/* 	<Label>Hiro Platform Api Key</Label> */}
+						{/* 	<Input placeholder="6129df35-d048-4948-8151-e381c23ae8ee" /> */}
+						{/* </View> */}
 						<ActionButton
 							loading={isLoading}
 							text="Save"
 							variant={"secondary"}
-							className="mt-3"
+							className=""
 							onPress={async () => {
 								setIsLoading(true);
 								try {

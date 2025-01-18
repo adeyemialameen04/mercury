@@ -1,17 +1,14 @@
 import React, { useEffect } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { H3, H4, Muted } from "~/components/ui/typography";
-import ActionButton from "~/components/ActionButton";
 import { useWalletStore } from "~/store/walletStore";
 import HomeActions from "~/components/home/HomeActions";
 import CopyButton from "~/components/ui/Copy";
 import TokenList from "~/components/home/TokenList";
-import { useNotification } from "~/context/NotificationContext";
 import { useWalletBalance } from "~/hooks/useWalletBalance";
 import { sc } from "~/lib/stacks/blockchain-client";
 
 export default function Page() {
-	const { expoPushToken } = useNotification();
 	const { walletData, isLoading: isWalletDataLoading } = useWalletStore();
 	const { balanceData, isLoading, error, refetch, mergedTokens } =
 		useWalletBalance(walletData);
@@ -21,7 +18,6 @@ export default function Page() {
 			sc.subscribeAddressStxBalance(
 				walletData?.address as string,
 				async (addr, balance) => {
-					// console.log(balance);
 					await refetch();
 				},
 			);
@@ -66,17 +62,6 @@ export default function Page() {
 										"0 STX"}
 						</H3>
 					</View>
-					<View className="flex-1">
-						<ActionButton
-							loading={isLoading}
-							text="Refresh"
-							variant={"secondary"}
-							onPress={async () => {
-								await refetch();
-								console.log(expoPushToken);
-							}}
-						/>
-					</View>
 				</View>
 			</View>
 			<HomeActions
@@ -85,8 +70,6 @@ export default function Page() {
 				bns={balanceData?.bns as string}
 				stxAddr={walletData?.address as string}
 			/>
-			{/* <SelectToken mergedTokens={mergedTokens} isLoading={isLoading} /> */}
-			{/* <MempoolTransactions walletData={walletData as WalletData} /> */}
 			<TokenList mergedTokens={mergedTokens} isLoading={isLoading} />
 		</ScrollView>
 	);

@@ -75,6 +75,7 @@ export default function ImportWalletSheet(
 				secretKey: seedPhrase,
 				password: "",
 			});
+			console.log(JSON.stringify(wallet, null, 2));
 			const account1 = wallet.accounts[0];
 			await setWalletData({
 				address: getAddressFromPrivateKey(account1.stxPrivateKey),

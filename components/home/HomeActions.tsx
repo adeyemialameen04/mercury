@@ -1,7 +1,5 @@
 import { View } from "react-native";
-import { ArrowDown } from "~/lib/icons/ArrowDown";
 import { Repeat } from "~/lib/icons/Repeat";
-import { Send } from "~/lib/icons/Send";
 import { Small } from "../ui/typography";
 import { Pressable } from "react-native";
 import { SheetManager } from "react-native-actions-sheet";

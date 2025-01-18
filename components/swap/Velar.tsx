@@ -2,7 +2,6 @@ import React, { useState, useCallback } from "react";
 import { ArrowUpDown } from "~/lib/icons/ArrowUpDown";
 import { View } from "react-native";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
-import { Input } from "../ui/input";
 import { Text } from "../ui/text";
 import { Button } from "../ui/button";
 import { Muted } from "../ui/typography";
@@ -16,22 +15,36 @@ import {
 	VelarSDK,
 } from "@velarprotocol/velar-sdk";
 import { WalletData } from "~/types/wallet";
-import {
-	broadcastTransaction,
-	fetchAbi,
-	makeContractCall,
-	PostConditionMode,
-	SignedContractCallOptions,
-} from "@stacks/transactions";
-import { transformPostConditions } from "~/lib/services/postConditions";
-import { transformFunctionArgs } from "~/lib/services/functionArgs";
+import { Input } from "../ui/input";
+import { swapTokenVelar } from "~/queries/swap";
+import { FromSelectToken } from "./FromToken";
+import { useBottomSheet } from "../ui/bottom-sheet.native";
+import { VELAR_API_BASE_URL } from "~/lib/constants";
+import axios from "axios";
+import { useQuery } from "react-query";
 
 const sdk = new VelarSDK();
 
+const getVelarTokens = async () => {
+	try {
+		const url = `${VELAR_API_BASE_URL}tokens`;
+		const { data } = await axios.get(url);
+		return data;
+	} catch (err) {
+		console.error(err);
+	}
+};
+
 const VelarSwapInterface = ({ walletData }: { walletData: WalletData }) => {
-	// State for input values
+	const { ref, open, close } = useBottomSheet();
 	const [fromAmount, setFromAmount] = useState("");
 	const [toAmount, setToAmount] = useState("");
+	const { isLoading: isTokensLoading, data: tokensData } = useQuery(
+		["tokens"],
+		async () => {
+			return await getVelarTokens();
+		},
+	);
 
 	// Token balances
 	const [balances] = useState({
@@ -71,71 +84,47 @@ const VelarSwapInterface = ({ walletData }: { walletData: WalletData }) => {
 		setToAmount(tempFromAmount);
 	}, [fromAmount, toAmount]);
 
-	const handleSwapConfirm = useCallback(async () => {
+	const handleSwapConfirm = async () => {
 		setIsLoading(true);
+		console.log(1);
 		// @ts-ignore
 		const { VELAR, STX } = await getTokens();
-		const account = walletData.address.trim();
-		console.log(account);
 		const swapInstance: ISwapService = await sdk.getSwapInstance({
-			account: account,
+			account: walletData.address as string,
 			inToken: STX,
 			outToken: VELAR,
 		});
+		console.log(2);
 
 		const amount: AmountOutResponse = await swapInstance.getComputedAmount({
 			type: SwapType.ONE,
 			amount: 1,
 		});
 		console.log(amount);
+		console.log(3);
 
 		const swapOptions: SwapResponse = await swapInstance.swap({
 			amount: 1,
 			type: SwapType.ONE,
 		});
-		console.log(swapOptions);
-		const postConditions = transformPostConditions(swapOptions.postConditions);
-		const funcArgs = transformFunctionArgs(swapOptions);
-		console.log(funcArgs, "transformFunctionArgs");
+		console.log(4);
 
-		const options: SignedContractCallOptions = {
-			...swapOptions,
-			network: "mainnet",
-			validateWithAbi: true,
-			// functionArgs: funcArgs,
-			senderKey: walletData.address,
-			postConditionMode: PostConditionMode.Deny,
-			postConditions,
-		};
+		console.log(5);
+		const serializedSwapOptions = JSON.parse(
+			JSON.stringify(swapOptions, (key, value) =>
+				typeof value === "bigint" ? value.toString() : value,
+			),
+		);
 
-		const abi = await fetchAbi({
-			contractAddress: swapOptions.contractAddress,
-			contractName: swapOptions.contractName,
-			network: "mainnet",
-		});
-		console.log(abi);
+		const res = await swapTokenVelar(serializedSwapOptions, walletData);
+		console.log(6);
 
-		return new Promise((resolve, reject) => {
-			setTimeout(async () => {
-				console.log("promising");
-				const tx = await makeContractCall(options);
-				console.log(2);
-
-				const res = await broadcastTransaction({
-					transaction: tx,
-					network: "mainnet",
-				});
-				console.log(3);
-
-				console.log(res);
-				resolve(res);
-			}, 0);
-		});
-	}, [fromAmount, toAmount]);
+		console.log(res);
+		setIsLoading(false);
+	};
 
 	return (
 		<Card className="">
-			{/* Header */}
 			<CardHeader className="flex-row justify-between items-center">
 				<Text className="text-white text-xl font-medium">Swap</Text>
 				<View className="flex-row items-center">
@@ -147,14 +136,15 @@ const VelarSwapInterface = ({ walletData }: { walletData: WalletData }) => {
 				<View className="rounded-lg mb-2">
 					<View className="flex-row justify-between items-center gap-3">
 						<Text className="flex-1">From</Text>
-						<View className="flex-row items-center bg-[#333333] rounded-full p-2 mb-2">
-							<View className="w-6 h-6 bg-orange-500 rounded-full mr-2" />
-							<Text className="text-white mr-1">STX</Text>
-							<Text className="text-gray-400">▼</Text>
-						</View>
+						<FromSelectToken sheetRef={ref} tokens={tokensData} />
+						{/* <View className="flex-row items-center bg-[#333333] rounded-full p-2 mb-2"> */}
+						{/* 	<View className="w-6 h-6 bg-orange-500 rounded-full mr-2" /> */}
+						{/* 	<Text className="text-white mr-1">STX</Text> */}
+						{/* 	<Text className="text-gray-400">▼</Text> */}
+						{/* </View> */}
 					</View>
 					<Input
-						className="flex-1"
+						className=""
 						placeholder="0.00"
 						value={fromAmount}
 						onChangeText={handleFromAmountChange}
@@ -187,7 +177,7 @@ const VelarSwapInterface = ({ walletData }: { walletData: WalletData }) => {
 						</View>
 					</View>
 					<Input
-						className="flex-1"
+						className=""
 						placeholder="0.00"
 						value={toAmount}
 						onChangeText={handleToAmountChange}

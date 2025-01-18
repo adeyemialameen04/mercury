@@ -147,7 +147,7 @@ export default function Page() {
 			<Card className="w-full border-transparent">
 				<TokenHeader tokenData={tokenData} />
 				<CardContent className="flex flex-col gap-4">
-					<Tabs value={activeTab} onValueChange={handleTabChange}>
+					<Tabs value={activeTab as string} onValueChange={handleTabChange}>
 						<TabsList className="flex-row w-full gap-4">
 							<TabsTrigger value="transactions" className="flex-1">
 								<Text>Transactions</Text>
@@ -160,7 +160,7 @@ export default function Page() {
 							</TabsTrigger>
 						</TabsList>
 						<TokenTabsContent
-							activeTab={activeTab}
+							activeTab={activeTab as string}
 							isLoading={isTransactionsLoading}
 							groupedTransactions={groupedTransactions}
 							error={error}
