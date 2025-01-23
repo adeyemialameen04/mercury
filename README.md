@@ -67,7 +67,7 @@ bun dev:android
 ## Roadmap
 
 - [ ] Implement Token Snipping feature.
-- [ ] Get notifications on new tokens launch.
+- [x] Get notifications on new tokens launch.
 - [ ] Implement token swapping functionality
 - [ ] Add support for NFTs
 - [ ] Integrate with popular DEXes
